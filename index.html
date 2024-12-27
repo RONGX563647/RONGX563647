@@ -1,0 +1,310 @@
+<!DOCTYPE html>
+<html lang="Chinese" xmlns="http://www.w3.org/1999/html">
+<head>
+    <link rel="stylesheet" href="css/indexcss.css">
+    <link rel="icon" href="img/img_1.png">
+    <meta charset="UTF-8">
+    <title> RONGX’S BLOG</title>
+</head>
+
+<body>
+        <div id="calendar-container"></div>
+         <script>
+        function createCalendar() {
+            // 获取当前日期
+            var today = new Date();
+            var year = today.getFullYear();
+            var month = today.getMonth();
+            // 创建月份名称数组
+            var monthNames = ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"];
+            // 创建日历头部（月份和年份）
+            var calendarHTML = '<h2>' + monthNames[month] + ' ' + year + '</h2>';
+            calendarHTML += '<table border="1"><tr><th>Sun</th><th>Mon</th><th>Tue</th><th>Wed</th><th>Thu</th><th>Fri</th><th>Sat</th></tr><tr>';
+            // 获取本月第一天是星期几
+            var firstDay = new Date(year, month, 1).getDay();
+            // 填充日历表格前面的空白单元格（如果第一天不是周日）
+            for (var i = 0; i < firstDay; i++) {
+                calendarHTML += '<td></td>';
+            }
+            // 填充本月的日期
+            var daysInMonth = new Date(year, month + 1, 0).getDate();
+            for (var day = 1; day <= daysInMonth; day++) {
+                if ((firstDay + day - 1) % 7 === 0 && day > 1) {
+                    calendarHTML += '</tr><tr>';
+                }
+                // 检查是否是今天的日期
+                if (day === today.getDate()) {
+                    calendarHTML += '<td class="today">' + day + '</td>';
+                } else {
+                    calendarHTML += '<td>' + day + '</td>';
+                }
+            }
+            // 闭合表格行和表格
+            calendarHTML += '</tr></table>';
+            // 将日历HTML添加到容器元素中
+            document.getElementById("calendar-container").innerHTML = calendarHTML;
+        }
+        // 调用函数来创建日历
+        createCalendar();
+    </script>
+
+
+        <ul id="todo-list">
+        <!-- 待办事项列表将在这里动态生成 -->
+    </ul>
+    <form id="todo-form">
+        <input type="text" id="todo-input" title="JUST TO DO!!! "  placeholder="添加新任务">
+        <input type="text" id="countdown-input"     title="I believe you can do it!" placeholder="设置倒计时（格式：分钟）">
+        <button type="submit">ADD</button>
+    </form>
+    <!-- 新增的时钟显示区域 -->
+    <div id="clock"></div>
+    <script>
+        // 获取待办事项列表、表单及倒计时输入框元素
+        const todoList = document.getElementById('todo-list');
+        const todoForm = document.getElementById('todo-form');
+        const todoInput = document.getElementById('todo-input');
+        const countdownInput = document.getElementById('countdown-input');
+
+        // 为表单添加提交事件监听器
+        todoForm.addEventListener('submit', function (e) {
+            e.preventDefault(); // 阻止表单默认提交行为
+
+            // 获取用户输入的任务及倒计时时间
+            const task = todoInput.value.trim();
+            const countdownStr = countdownInput.value.trim();
+
+            // 如果任务不为空且倒计时时间是有效数字，则添加到待办事项列表并设置倒计时
+            if (task!== '' &&!isNaN(parseInt(countdownStr))) {
+                const countdownMinutes = parseInt(countdownStr);
+                addTodo(task, countdownMinutes);
+                todoInput.value = '';
+                countdownInput.value = '';
+            }
+        });
+
+        // 添加待办事项及设置倒计时的函数
+        function addTodo(task, countdownMinutes) {
+            // 创建新的列表项
+            const li = document.createElement('li');
+            li.textContent = task;
+
+            // 为列表项添加点击事件监听器，用于标记任务完成
+            li.addEventListener('click', function () {
+                li.classList.toggle('completed');
+            });
+
+            // 在列表项中添加显示倒计时的元素
+            const countdownElement = document.createElement('span');
+            countdownElement.textContent = ` (倒计时：${countdownMinutes}分钟)`;
+            li.appendChild(countdownElement);
+
+            // 创建删除按钮并添加点击事件监听器
+            const deleteButton = document.createElement('button');
+            deleteButton.textContent = '删除';
+            deleteButton.addEventListener('click', function () {
+                todoList.removeChild(li);
+            });
+            li.appendChild(deleteButton);
+
+            // 设置倒计时逻辑
+            const totalSeconds = countdownMinutes * 60;
+            const startTime = Date.now();
+            const endTime = startTime + totalSeconds * 1000;
+
+            const countdownInterval = setInterval(function () {
+                const currentTime = Date.now();
+                const remainingSeconds = Math.floor((endTime - currentTime) / 1000);
+                if (remainingSeconds <= 0) {
+                    clearInterval(countdownInterval);
+                    alert(`${task}时间已经到了，请尽快处理！`);
+                } else {
+                    countdownElement.textContent = ` (倒计时：${remainingSeconds}秒)`;
+                }
+            }, 1000);
+
+            // 将新的列表项添加到待办事项列表中
+            todoList.appendChild(li);
+        }
+
+        // 新增：显示当前时间并每秒更新的函数
+        function displayClock() {
+            const clockElement = document.getElementById('clock');
+            function updateClock() {
+                const now = new Date();
+                const hours = now.getHours().toString().padStart(2, '0');
+                const minutes = now.getMinutes().toString().padStart(2, '0');
+                const seconds = now.getSeconds().toString().padStart(2, '0');
+                clockElement.textContent = `${hours}:${minutes}:${seconds}`;
+            }
+            updateClock();
+            setInterval(updateClock, 1000);
+        }
+
+        // 调用函数以显示时钟
+        displayClock();
+
+
+    </script>
+
+
+
+ <main>
+        <aside>
+            <h2 style="text-align: center;">Model</h2>
+            <br>
+            <br>
+            <br>
+            <br>
+            <br>
+            <br>
+            <ul style="color: #ee4c4c">
+                <li style="color: red"><a style="color:darkred" href="#">STUDY</a></li>
+                <br>
+                <li style="color: aqua"><a  style="color:darkcyan" href="#">GEEK</a></li>
+                <br>
+                <li style="color:gold"><a  style="color:darkgoldenrod" href="#">HACK</a></li>
+                <br>
+                <h3>quick  --link</h3>>
+                <a style="color:darkslategrey" href="http://github.com">GitHub</a>
+                <a style="color:darkslategrey" href="https://www.csdn.net/">CSDN</a>
+                <a style="color:darkslategrey" href="https://www.stmcu.org.cn/ ">STM32</a>
+                <a style="color:darkslategrey" href="http://www.51hei.com/bbs/mcu-2-1.html">STC51</a>
+                <a style="color:darkslategrey" href="https://www.zhihu.com/">Zhihu</a>
+
+            </ul>
+        </aside>
+
+    </main>
+
+
+    <header>
+        <h1>WELCOM TO MY BLOG!
+                Passion! ! !</h1>
+        <img src="https://pic1.zhimg.com/v2-ca88fa7325741216017a84a06996ea1a_xll.jpg?source=32738c0c&needBackground=1" alt="Blog Image" style="width: 100px; height: 100px; border-radius: 100%; float: left;">
+    </header>
+
+    <nav>
+         <form action="http://yandex.com/search?q" method="get" style="float: left;">
+        <input type="text" name="q" placeholder="Find anything">
+        <button type="submit">YANDEX搜索</button>
+    </form>
+        <a title="星辰云后台" href="https://starxn.com/login">首页</a>
+        <a href="jetbrains://pycharm/navigate/reference?project=html&path=Learn PyQt6.md">文章</a>
+        <a >关于我</a>
+        <label title="鼠标悬停显示" for="contact-method">选择联系方式：</label>
+        <select id="contact-method" name="contact-method">
+            <option value="email" title="ADDRESS:lrx563647@outlook.com">SEND EMAILS</option>
+            <option value="phone" title="TEL:15759702071">CALL FOR ME</option>
+            <option value="wechat" title="Wechat:China-lrx2006">ADD MY WECHAT</option>
+            <option value="qq" title="QQ:1132623370">ADD MY QQ</option>
+            <option value="GITHUB" title="RONGX563647" >FOLLOW MY GITHUB</option>
+            <option title="King_model">CSDN</option>
+
+        </select>
+        <a href="https://www.luogu.com.cn/">洛谷</a>
+        <a href="https://chat.baidu.com/search?isShowHello=1&pd=csaitab&setype=csaitab&extParamsJson=%7B%22enter_type%22%3A%22home_tab%22%7D">百度AI</a>
+        <a href="https://www.marscode.cn/practice/ln5vk6yev57533?">Marscode</a>
+        <a href="todolist.html">TodoList</a>
+        <a href="https://jwglxt.fjnu.edu.cn/jwglxt/xtgl/index_initMenu.html?jsdm=&_t=1726234675689">FNU</a>
+    </nav>
+    <section>
+        <div class="article-list">
+            <hr>
+            <h2>My最新文章</h2><a href="https://www.runoob.com/">菜鸟教程</a>
+            <a href="https://www.liaoxuefeng.com/">廖雪峰教程</a>
+            <article>
+                <h3>《14天速通python爬虫》</h3>
+                <a href="https://zhuanlan.zhihu.com/column/c_1845900652779294722">跳转知乎专栏</a>
+            </article>
+            <article>
+                <h3>《7天入门web前端》</h3>
+                <a href="https://zhuanlan.zhihu.com/column/c_1845914601834815488">跳转知乎专栏</a>
+                <hr>
+                <br>
+            </article>
+            <h2 class="eda">My项目进度</h2>
+            <a class=  "eda" style="font-size: 12px;display:inline"  href="https://oshwhub.com/explore">EDA开源项目</a>
+            <p>1. 基于C51的智能小车（复刻）</p>
+            <p style="font-weight: bold">2. 基于raspberry pi5的LLM语音助手(原创)</p>
+            <p>3. 尚硅谷STC89C52项目实操</p>
+            <p>4. 野火小智的STM32学习套件</p>
+            <a href="https://github.com/Frica01/WeChatMassTool">5.基于PYqt的WeChat回复及任务提醒AI版</a>
+            <hr>
+            <h2>My course</h2>
+            <div>
+            <a style="color:red"  href="https://www.bilibili.com/video/BV1Eb411u7Fw/?spm_id_from=333.337.search-card.all.click">高等数学</a>
+            <a style="color:#f38406" href="https://www.bilibili.com/video/BV1h7pteyEww/?spm_id_from=333.337.search-card.all.click">线性代数</a>
+            <a style="color:#f3ef16" href="https://www.bilibili.com/video/BV1JXppejE8q/?spm_id_from=333.337.search-card.all.click">概率论</a>
+            <a style="color:#35ff07" href="https://www.bilibili.com/video/BV1HW4y1A7Yi/?spm_id_from=333.337.search-card.all.click">CS导论</a>
+            <a style="color:#13fbbd" href="https://www.bilibili.com/video/BV13W4y127Ey/?spm_id_from=333.337.search-card.all.click&vd_source=3e5b8596fdf7a1e637fb85e996addeda">数据结构</a>
+            <a style="color:#0f97f6" href="https://www.bilibili.com/video/BV1DW4y1f7p8/?spm_id_from=333.337.search-card.all.click&vd_source=3e5b8596fdf7a1e637fb85e996addeda">算法</a>
+            <a style="color:#a338ff" href="https://www.bilibili.com/video/BV11i421h77X/?spm_id_from=333.337.search-card.all.click">kali linux</a>
+
+            </div>
+            <h2>My profound passion</h2>
+            <p>摄影 <a style="font-size: 10px;color:darkred" href="photo.html">作品展示</a></p>
+            <p title="心愿清单：宁波，杭州，上海，广州，深圳，北京，拉萨，乌鲁木齐">旅游</p>
+            <p>骑行</p>
+            <p>Adobe Photoshop</p>
+            <p>Adobe Lightroom</p>
+            <p>Adobe Premiere</p>
+            <p>Polishing the PPT Design</p>
+            <h2>My 学习笔记</h2>
+            <a href="pyqtlearn.html">
+                <p title="qt designer GUI快速编程学习">PYQT6</p>
+            </a>
+            <p>......</p>
+            <p>......</p>
+            <hr>
+
+        </div>
+        <div class="project-progress">
+            <hr>
+            <h2>MY学习进度</h2>
+            <h3>嵌入式</h3>
+            <a href="https://www.bilibili.com/video/BV139sSe7E2K/?spm_id_from=333.337.search-card.all.click">1.STC89C52学习</a>
+            <p>2.STM32学习</p>
+            <p>3.模拟电路</p>
+            <a  href="https://www.bilibili.com/video/BV1tF4m1A7xH/?spm_id_from=333.337.search-card.all.click">4.数字电路digital</a>
+            <p>5.python QT GUI</p>
+            <h3>web前端</h3>
+            <p>1.HTML</p>
+            <p>2.CSS</p>
+            <p>3.JAVASCRIPT</p>
+            <p>4.Vue</p>
+            <h3>hack</h3>
+            <p>1.渗透测试</p>
+            <p>2.逆向工程</p>
+            <p>3.kali linux学习</p>
+            <hr>
+            <h2>软件熟悉</h2>
+            <p>1.Vs code</p>
+            <p>2.抖音小程序开发者工具</p>
+            <p>3.Cursor+Qwen2.5</p>
+            <a href="https://www.bazhuayu.com/helpcenter/docs/zcwRgn">4.postman+八爪鱼采集器</a>
+            <p><a href="https://git-scm.com/docs">5.Git&&github desktop</a></p>
+            <hr>
+            <h2>GITHUB PROGRAM</h2>
+            <a style="color:#9c0606" href="https://github.com/pyqt/examples">PYQT example</a>
+            <h2>The current momentous task</h2>
+            <p>1. 互联网+创新创业大赛——重塑新生</p>
+            <p>2. 正大杯市场调研大赛</p>
+            <p>3. 蓝桥杯电子赛单片机C51</p>
+            <p>4. 基于raspberry pi5的LLM语音助手(原创)</p>
+            <p>5. 基于C51的智能小车（复刻）</p>
+            <p>6. 基于PYqt的WeChat回复及任务提醒AI版</p>
+            <p>7. 二战软考软件设计师o(╥﹏╥)o</p>
+            <p>8. 二战CET4 o(╥﹏╥)o</p>
+            <hr>
+        </div>
+
+    </section>
+    <footer>
+        <hr>
+        <p style="font-size: 12px;color:gray">版权所有 &copy; 2025 RONGX</p>
+        <a href="worklog.html"><p style="font-size: 10px;">如果没有躺赢的命，那就要站起来奔跑。我可以一落千丈，但我偏要一鸣惊人。</p></a>
+
+    </footer>
+</body>
+</html>

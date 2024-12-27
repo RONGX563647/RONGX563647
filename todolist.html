@@ -1,0 +1,160 @@
+<!DOCTYPE html>
+<html lang="chinese">
+<head>
+    <meta charset="UTF-8">
+    <title>todolist</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: rgb(23, 22, 22);
+        }
+        h1 {
+            color: #ffffff;
+            text-align: center;
+        }
+        ul {
+            list-style-type: none;
+            padding: 0;
+        }
+        li {
+            background-color: #ee4c4c;
+            border: 1px solid #ccc;
+            margin: 10px 0;
+            padding: 10px;
+        }
+     .completed {
+            text-decoration: line-through;
+            color: #999;
+        }
+        form {
+            margin-top: 20px;
+            text-align: center;
+        }
+        input[type="text"] {
+            padding: 10px;
+            width: 300px;
+            border: 1px solid #ccc;
+        }
+        button {
+            padding: 10px 20px;
+            background-color: #333;
+            color: #fff;
+            border: none;
+            cursor: pointer;
+        }
+        /* 新增的时钟样式 */
+        #clock {
+            text-align: center;
+            font-size: 24px;
+            color: white;
+            margin-top: 20px;
+        }
+    </style>
+</head>
+<body>
+    <h1>todolist</h1>
+    <img src="https://ts1.cn.mm.bing.net/th/id/R-C.021bab6b3ffefb444edd4c4a96dec72a?rik=%2fckn2eZ5sdGZCQ&riu=http%3a%2f%2fn.sinaimg.cn%2fsinakd20111%2f173%2fw623h350%2f20220818%2f45ec-6467b559bf0e4e59ead235bcb537275b.jpg&ehk=v%2bReLGSQhiohne44Nh%2f7TsHPKJd2XYVsjsKrPRu0wqk%3d&risl=&pid=ImgRaw&r=0" alt=https://ts1.cn.mm.bing.net/th/id/R-C.021bab6b3ffefb444edd4c4a96dec72a?rik=%2fckn2eZ5sdGZCQ&riu=http%3a%2f%2fn.sinaimg.cn%2fsinakd20111%2f173%2fw623h350%2f20220818%2f45ec-6467b559bf0e4e59ead235bcb537275b.jpg&ehk=v%2bReLGSQhiohne44Nh%2f7TsHPKJd2XYVsjsKrPRu0wqk%3d&risl=&pid=ImgRaw&r=0">
+    <ul id="todo-list">
+        <!-- 待办事项列表将在这里动态生成 -->
+    </ul>
+    <form id="todo-form">
+        <input type="text" id="todo-input" placeholder="添加新任务">
+        <input type="text" id="countdown-input" placeholder="设置倒计时（格式：分钟）">
+        <button type="submit">添加</button>
+    </form>
+    <!-- 新增的时钟显示区域 -->
+    <div id="clock"></div>
+    <script>
+        // 获取待办事项列表、表单及倒计时输入框元素
+        const todoList = document.getElementById('todo-list');
+        const todoForm = document.getElementById('todo-form');
+        const todoInput = document.getElementById('todo-input');
+        const countdownInput = document.getElementById('countdown-input');
+
+        // 为表单添加提交事件监听器
+        todoForm.addEventListener('submit', function (e) {
+            e.preventDefault(); // 阻止表单默认提交行为
+
+            // 获取用户输入的任务及倒计时时间
+            const task = todoInput.value.trim();
+            const countdownStr = countdownInput.value.trim();
+
+            // 如果任务不为空且倒计时时间是有效数字，则添加到待办事项列表并设置倒计时
+            if (task!== '' &&!isNaN(parseInt(countdownStr))) {
+                const countdownMinutes = parseInt(countdownStr);
+                addTodo(task, countdownMinutes);
+                todoInput.value = '';
+                countdownInput.value = '';
+            }
+        });
+
+        // 添加待办事项及设置倒计时的函数
+        function addTodo(task, countdownMinutes) {
+            // 创建新的列表项
+            const li = document.createElement('li');
+            li.textContent = task;
+
+            // 为列表项添加点击事件监听器，用于标记任务完成
+            li.addEventListener('click', function () {
+                li.classList.toggle('completed');
+            });
+
+            // 在列表项中添加显示倒计时的元素
+            const countdownElement = document.createElement('span');
+            countdownElement.textContent = ` (倒计时：${countdownMinutes}分钟)`;
+            li.appendChild(countdownElement);
+
+            // 创建删除按钮并添加点击事件监听器
+            const deleteButton = document.createElement('button');
+            deleteButton.textContent = '删除';
+            deleteButton.addEventListener('click', function () {
+                todoList.removeChild(li);
+            });
+            li.appendChild(deleteButton);
+
+            // 设置倒计时逻辑
+            const totalSeconds = countdownMinutes * 60;
+            const startTime = Date.now();
+            const endTime = startTime + totalSeconds * 1000;
+
+            const countdownInterval = setInterval(function () {
+                const currentTime = Date.now();
+                const remainingSeconds = Math.floor((endTime - currentTime) / 1000);
+                if (remainingSeconds <= 0) {
+                    clearInterval(countdownInterval);
+                    alert(`${task}时间已经到了，请尽快处理！`);
+                } else {
+                    countdownElement.textContent = ` (倒计时：${remainingSeconds}秒)`;
+                }
+            }, 1000);
+
+            // 将新的列表项添加到待办事项列表中
+            todoList.appendChild(li);
+        }
+
+        // 新增：显示当前时间并每秒更新的函数
+        function displayClock() {
+            const clockElement = document.getElementById('clock');
+            function updateClock() {
+                const now = new Date();
+                const hours = now.getHours().toString().padStart(2, '0');
+                const minutes = now.getMinutes().toString().padStart(2, '0');
+                const seconds = now.getSeconds().toString().padStart(2, '0');
+                clockElement.textContent = `${hours}:${minutes}:${seconds}`;
+            }
+            updateClock();
+            setInterval(updateClock, 1000);
+        }
+
+        // 调用函数以显示时钟
+        displayClock();
+
+        // 新增：添加记事本功能的相关代码（与之前类似，这里省略详细解释）
+        const notePad = document.createElement('textarea');
+        notePad.setAttribute('placeholder', '在这里写下你的笔记');
+        notePad.setAttribute('rows', '5');
+        notePad.setAttribute('cols', '40');
+        document.body.appendChild(notePad);
+    </script>
+</body>
+</html>

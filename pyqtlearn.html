@@ -1,0 +1,2530 @@
+<!DOCTYPE html>
+<html lang="Chinese">
+<head>
+    <meta charset="UTF-8">
+    <title> RONGX’S BLOG</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 20px;
+            background-color: #efe9cd;
+        }
+        h1, h2, h3 {
+            color: #333;
+        }
+        p {
+            color: #666;
+        }
+        code {
+            font-family: Consolas, monospace;
+            background-color: rgba(255, 255, 255, 0.6);
+            padding: 2px;
+        }
+        footer {
+            text-align: center;
+            margin-top: 50px;
+            posion: fixed;
+        }
+        </style>
+</head>
+<h1 style="color:RED;text-align:center;border: 1px solid darkred"><strong>RONGX`S PyQt6 学习笔记</strong></h1>
+<h4 style="color:gray;text-align: right">声明：原文根据GitHub mherrmann大佬的pyqt/examples项目的具体code实现以及个人学习笔记</h4>
+<h4 style="color:gray;text-align: right">温馨提示：下载并使用markdown文件获得更好的阅读体验</h4>
+<h5>推荐学习路线：<a href="https://www.byhy.net/py/qt/qt_01/">文字教程</a>
+    <a href="https://www.bilibili.com/video/BV1cJ411R7bP/?spm_id_from=333.337.search-card.all.click&vd_source=3e5b8596fdf7a1e637fb85e996addeda">同步视频学习</a>
+</h5>
+<a style="color:#e58476;text-align: right" href="https://github.com/pyqt/examples">github address</a>
+<a style="color:#f60909;text-align: right" href="PyQt6.md">下载markdown文件</a>
+<hr>
+<h1><strong>PyQt6 学习笔记</strong></h1>
+<h2><em><strong>marldown 使用指南</strong></em></h2>
+<p>Markdown（md）是一种轻量级标记语言，以下是基本语法：</p>
+<p><strong>一、标题</strong></p>
+<ul>
+<li><strong>一级标题</strong>：使用1个“#”号加空格再加标题内容，例如：<code># 这是一级标题</code>。一级标题字体最大，通常用于文档的主要章节。</li>
+<li><strong>二级标题</strong>：用“##”，如<code>## 这是二级标题</code>，字体稍小于一级标题，用于文档的子章节。</li>
+<li><strong>以此类推</strong>：可以有三级标题（<code>###</code>）、四级标题（<code>####</code>）等，最多可以到六级标题。</li>
+</ul>
+<p><strong>二、段落与换行</strong></p>
+<ul>
+<li><strong>段落</strong>：不同段落之间用空行分隔。例如：</li>
+</ul>
+<pre><code>这是第一段。
+
+这是第二段。
+</code></pre>
+<ul>
+<li><strong>换行</strong>：如果要在段落内部换行，可以在行末使用两个或两个以上的空格，然后回车。不过在很多Markdown编辑器中，也可以直接回车进行换行。</li>
+</ul>
+<p><strong>三、字体格式</strong></p>
+<ul>
+<li><strong>加粗</strong>：在要加粗的文字两边使用“**”或“__”，例如：<code>**这部分文字是加粗的**</code>或者<code>__这也是加粗的__</code>。</li>
+<li><strong>斜体</strong>：在文字两边添加“*”或“_”来表示斜体，如<code>*这是斜体文字*</code>或者<code>_这也是斜体的_</code>。</li>
+<li><strong>加粗斜体</strong>：可以组合使用，如<code>***这是加粗斜体文字***</code>或者<code>___这也是加粗斜体的___</code>。</li>
+</ul>
+<p><strong>四、列表</strong></p>
+<ul>
+<li><strong>无序列表</strong>：使用“-”、“+”或者“*”加空格来开始一个无序列表项。例如：</li>
+</ul>
+<pre><code>- 项目一
+- 项目二
++ 项目三
+* 项目四
+</code></pre>
+<ul>
+<li><strong>有序列表</strong>：使用数字加“.”再加空格来创建有序列表。例如：</li>
+</ul>
+<pre><code>1. 第一项
+2. 第二项
+3. 第三项
+</code></pre>
+<p><strong>五、链接</strong></p>
+<ul>
+<li><strong>行内式链接</strong>：语法是<code>[链接文字](链接地址)</code>。例如：<code>[百度](https://www.baidu.com)</code>，当用户点击“百度”这两个字时，就会跳转到百度的官网。</li>
+<li><strong>参考式链接</strong>：先在文档的某个位置定义好链接，格式为<code>[链接标识]:链接地址</code>，然后在需要使用链接的地方使用<code>[链接文字][链接标识]</code>。例如：</li>
+</ul>
+<pre><code>[百度官网][1]
+
+[1]:https://www.baidu.com
+</code></pre>
+<p><strong>六、插入图片</strong></p>
+<ul>
+<li>语法是<code>![图片替代文字](图片地址)</code>。“图片替代文字”是当图片无法显示时显示的文字，也用于屏幕阅读器等辅助工具来描述图片内容。例如：<code>![一只猫](https://example.com/cat.jpg)</code>。</li>
+</ul>
+<p><strong>七、引用</strong></p>
+<ul>
+<li>使用“&gt;”来创建引用块。例如：</li>
+</ul>
+<pre><code>&gt; 这是一段引用的文字。
+</code></pre>
+<p>可以在引用块中嵌套其他的Markdown语法，如列表、链接等。</p>
+<p><strong>八、代码块</strong></p>
+<ul>
+<li><strong>行内代码</strong>：使用反引号“<code>”将代码包裹起来，如：</code>这是一段<code>代码</code>示例`。</li>
+<li><strong>代码块</strong>：如果是多行代码，使用三个反引号“```”包裹代码，并且可以在第一组反引号后面指定代码语言，这样可以实现语法高亮。例如：</li>
+</ul>
+<pre><code class="language-python">print(&quot;这是Python代码&quot;)
+</code></pre>
+<p>不同的Markdown编辑器对语法的支持可能会有些细微差别，但以上这些基本语法在大多数情况下都是通用的。</p>
+<p>以上是Markdown的基本语法，希望对你有所帮助！</p>
+<hr>
+<h1><strong>Lesson1 label 如何展示一个标签</strong></h1>
+<h3>GitHub lessons</h3>
+<h1>PyQt QLabel</h1>
+<p>This example shows how you can create a Hello World app using PyQt. It uses a <a href="https://doc.qt.io/qt-5/qlabel.html"><code>QLabel</code></a> to display a simple window:</p>
+<p><img src="" alt="PyQt QLabel screenshot"></p>
+<pre><code>from PyQt6.QtWidgets import *
+app = QApplication([])
+label = QLabel(&#39;Hello World!&#39;)
+label.show()
+app.exec()
+</code></pre>
+<p>For instructions how you can run this code, please see the <a href="../../README.md#running-the-examples">top-level README</a>.</p>
+<p>The code works as follows: First, we import the necessary PyQt classes via the statement:</p>
+<pre><code>from PyQt6.QtWidgets import *
+</code></pre>
+<p>Next, we create a <a href="https://doc.qt.io/Qt-5/qapplication.html"><code>QApplication</code></a>. This is required in every PyQt app. In a sense, it initializes PyQt:</p>
+<pre><code>app = QApplication([])
+</code></pre>
+<p>Then, we create the label with the text we want:</p>
+<pre><code>label = QLabel(&#39;Hello World!&#39;)
+</code></pre>
+<p>By calling <code>.show()</code> on a <a href="../02%20PyQt%20Widgets">widget</a>, we can spawn a window that displays it:</p>
+<pre><code>label.show()
+</code></pre>
+<p>Finally, we hand control over to Qt:</p>
+<pre><code>app.exec()
+</code></pre>
+<p>This too is required in every Qt application. It gives Qt a chance to run and process user input, such as for instance when the user clicks the &quot;Window close&quot; button.</p>
+<p>And that&#39;s it! Congratulations on your first PyQt app :-)</p>
+<h3>code</h3>
+<pre><code class="language-python">from PyQt6.QtWidgets import *
+app = QApplication([])
+window = QWidget()
+label = QLabel(&#39;阿米诺斯&#39;)
+label.show()
+app.exec()
+</code></pre>
+<hr>
+<h1>Lesson2 widgets QT的小组件</h1>
+<h3>GitHub lessons</h3>
+<h1>PyQt Widgets</h1>
+<p>A <em>widget</em> is a GUI element: A button, a text field, ... The sample application in this directory shows the most common PyQt widgets:</p>
+<p><img src="../screenshots/pyqt-widgets.png" alt="PyQt widgets screenshot"></p>
+<p>If you know HTML: Widgets are a little like HTML elements. They can be nested, and have a different appearance and behavior depending on their type. (Eg. a link <code>&lt;a&gt;</code> looks and behaves differently from an image <code>&lt;img&gt;</code>.)</p>
+<p>Some of the widgets you can see in this screenshot are:</p>
+<ul>
+<li><a href="https://doc.qt.io/qt-5/qlabel.html">QLabel</a></li>
+<li><a href="https://doc.qt.io/qt-5/qcombobox.html">QComboBox</a></li>
+<li><a href="https://doc.qt.io/qt-5/qcheckbox.html">QCheckBox</a></li>
+<li><a href="https://doc.qt.io/qt-5/qradiobutton.html">QRadioButton</a></li>
+<li><a href="https://doc.qt.io/qt-5/qpushbutton.html">QPushButton</a></li>
+<li><a href="https://doc.qt.io/qt-5/qtablewidget.html">QTableWidget</a></li>
+<li><a href="https://doc.qt.io/qt-5/qlineedit.html">QLineEdit</a></li>
+<li><a href="https://doc.qt.io/qt-5/qslider.html">QSlider</a></li>
+<li><a href="https://doc.qt.io/qt-5/qprogressbar.html">QProgressBar</a></li>
+</ul>
+<p>The source code for this application is in <a href="main.py"><code>main.py</code></a>. For instructions how to run it, please see <a href="../../README.md#running-the-examples">here</a>. Don&#39;t worry if you don&#39;t yet fully understand the source code. The main purpose of this example is to give you a feel for what a widget is, and which ones are available. The next examples give you a more gradual route to more advanced PyQt topics.</p>
+<h3>code</h3>
+<pre><code class="language-python">from PyQt6.QtCore import QDateTime, Qt, QTimer
+from PyQt6.QtWidgets import (QApplication, QCheckBox, QComboBox, QDateTimeEdit,
+                             QDial, QDialog, QGridLayout, QGroupBox, QHBoxLayout, QLabel, QLineEdit,
+                             QProgressBar, QPushButton, QRadioButton, QScrollBar, QSizePolicy,
+                             QSlider, QSpinBox, QStyleFactory, QTableWidget, QTabWidget, QTextEdit,
+                             QVBoxLayout, QWidget)
+
+
+class WidgetGallery(QDialog):
+    def __init__(self, parent=None):
+        super(WidgetGallery, self).__init__(parent)
+        # 保存应用程序的原始调色板
+        self.originalPalette = QApplication.palette()
+
+        styleComboBox = QComboBox()
+        # 添加所有可用的样式名到下拉框
+        styleComboBox.addItems(QStyleFactory.keys())
+
+        styleLabel = QLabel(&quot;&amp;Style:&quot;)
+        styleLabel.setBuddy(styleComboBox)
+
+        self.useStylePaletteCheckBox = QCheckBox(&quot;&amp;Use style&#39;s standard palette&quot;)
+        self.useStylePaletteCheckBox.setChecked(True)
+
+        disableWidgetsCheckBox = QCheckBox(&quot;&amp;Disable widgets&quot;)
+
+        self.createTopLeftGroupBox()
+        self.createTopRightGroupBox()
+        self.createBottomLeftTabWidget()
+        self.createBottomRightGroupBox()
+        self.createProgressBar()
+
+        # 当选择的样式改变时，调用changeStyle方法
+        styleComboBox.textActivated.connect(self.changeStyle)
+        # 当复选框状态改变时，调用changePalette方法
+        self.useStylePaletteCheckBox.toggled.connect(self.changePalette)
+        # 当禁用部件复选框状态改变时，禁用/启用topLeftGroupBox
+        disableWidgetsCheckBox.toggled.connect(self.topLeftGroupBox.setDisabled)
+        disableWidgetsCheckBox.toggled.connect(self.topRightGroupBox.setDisabled)
+        disableWidgetsCheckBox.toggled.connect(self.bottomLeftTabWidget.setDisabled)
+        disableWidgetsCheckBox.toggled.connect(self.bottomRightGroupBox.setDisabled)
+
+        topLayout = QHBoxLayout()
+        topLayout.addWidget(styleLabel)
+        topLayout.addWidget(styleComboBox)
+        topLayout.addStretch(1)
+        topLayout.addWidget(self.useStylePaletteCheckBox)
+        topLayout.addWidget(disableWidgetsCheckBox)
+
+        mainLayout = QGridLayout()
+        mainLayout.addLayout(topLayout, 0, 0, 1, 2)
+        mainLayout.addWidget(self.topLeftGroupBox, 1, 0)
+        mainLayout.addWidget(self.topRightGroupBox, 1, 1)
+        mainLayout.addWidget(self.bottomLeftTabWidget, 2, 0)
+        mainLayout.addWidget(self.bottomRightGroupBox, 2, 1)
+        mainLayout.addWidget(self.progressBar, 3, 0, 1, 2)
+        mainLayout.setRowStretch(1, 1)
+        mainLayout.setRowStretch(2, 1)
+        mainLayout.setColumnStretch(0, 1)
+        mainLayout.setColumnStretch(1, 1)
+        self.setLayout(mainLayout)
+
+        self.setWindowTitle(&quot;Styles&quot;)
+        self.changeStyle(&#39;Windows&#39;)
+
+    def changeStyle(self, styleName):
+        # 设置应用程序的样式
+        QApplication.setStyle(QStyleFactory.create(styleName))
+        self.changePalette()
+
+    def changePalette(self):
+        if (self.useStylePaletteCheckBox.isChecked()):
+            # 使用当前样式的标准调色板
+            QApplication.setPalette(QApplication.style().standardPalette())
+        else:
+            # 使用原始调色板
+            QApplication.setPalette(self.originalPalette)
+
+    def advanceProgressBar(self):
+        curVal = self.progressBar.value()
+        maxVal = self.progressBar.maximum()
+        self.progressBar.setValue(curVal + (maxVal - curVal) // 100)
+
+    def createTopLeftGroupBox(self):
+        self.topLeftGroupBox = QGroupBox(&quot;Group 1&quot;)
+
+        radioButton1 = QRadioButton(&quot;Radio button 1&quot;)
+        radioButton2 = QRadioButton(&quot;Radio button 2&quot;)
+        radioButton3 = QRadioButton(&quot;Radio button 3&quot;)
+        radioButton1.setChecked(True)
+
+        checkBox = QCheckBox(&quot;Tri - state check box&quot;)
+        checkBox.setTristate(True)
+        checkBox.setCheckState(Qt.CheckState.PartiallyChecked)
+
+        layout = QVBoxLayout()
+        layout.addWidget(radioButton1)
+        layout.addWidget(radioButton2)
+        layout.addWidget(radioButton3)
+        layout.addWidget(checkBox)
+        layout.addStretch(1)
+        self.topLeftGroupBox.setLayout(layout)
+
+    def createTopRightGroupBox(self):
+        self.topRightGroupBox = QGroupBox(&quot;Group 2&quot;)
+
+        defaultPushButton = QPushButton(&quot;Default Push Button&quot;)
+        defaultPushButton.setDefault(True)
+
+        togglePushButton = QPushButton(&quot;Toggle Push Button&quot;)
+        togglePushButton.setCheckable(True)
+        togglePushButton.setChecked(True)
+
+        flatPushButton = QPushButton(&quot;Flat Push Button&quot;)
+        flatPushButton.setFlat(True)
+
+        layout = QVBoxLayout()
+        layout.addWidget(defaultPushButton)
+        layout.addWidget(togglePushButton)
+        layout.addWidget(flatPushButton)
+        layout.addStretch(1)
+        self.topRightGroupBox.setLayout(layout)
+
+    def createBottomLeftTabWidget(self):
+        self.bottomLeftTabWidget = QTabWidget()
+        self.bottomLeftTabWidget.setSizePolicy(QSizePolicy.Policy.Preferred,
+                                               QSizePolicy.Policy.Ignored)
+
+        tab1 = QWidget()
+        tableWidget = QTableWidget(10, 10)
+
+        tab1hbox = QHBoxLayout()
+        tab1hbox.setContentsMargins(5, 5, 5, 5)
+        tab1hbox.addWidget(tableWidget)
+        tab1.setLayout(tab1hbox)
+
+        tab2 = QWidget()
+        textEdit = QTextEdit()
+
+        textEdit.setPlainText(&quot;Twinkle, twinkle, little star,\n&quot;
+                              &quot;How I wonder what you are.\n&quot;
+                              &quot;Up above the world so high,\n&quot;
+                              &quot;Like a diamond in the sky.\n&quot;
+                              &quot;Twinkle, twinkle, little star,\n&quot;
+                              &quot;How I wonder what you are!\n&quot;)
+
+        tab2hbox = QHBoxLayout()
+        tab2hbox.setContentsMargins(5, 5, 5, 5)
+        tab2hbox.addWidget(textEdit)
+        tab2.setLayout(tab2hbox)
+
+        self.bottomLeftTabWidget.addTab(tab1, &quot;&amp;Table&quot;)
+        self.bottomLeftTabWidget.addTab(tab2, &quot;Text &amp;Edit&quot;)
+
+    def createBottomRightGroupBox(self):
+        self.bottomRightGroupBox = QGroupBox(&quot;Group 3&quot;)
+        self.bottomRightGroupBox.setCheckable(True)
+        self.bottomRightGroupBox.setChecked(True)
+
+        lineEdit = QLineEdit(&#39;s3cRe7&#39;)
+        lineEdit.setEchoMode(QLineEdit.EchoMode.Password)
+
+        spinBox = QSpinBox(self.bottomRightGroupBox)
+        spinBox.setValue(50)
+
+        dateTimeEdit = QDateTimeEdit(self.bottomRightGroupBox)
+        dateTimeEdit.setDateTime(QDateTime.currentDateTime())
+
+        slider = QSlider(Qt.Orientation.Horizontal, self.bottomRightGroupBox)
+        slider.setValue(40)
+
+        scrollBar = QScrollBar(Qt.Orientation.Horizontal, self.bottomRightGroupBox)
+        scrollBar.setValue(60)
+
+        dial = QDial(self.bottomRightGroupBox)
+        dial.setValue(30)
+        dial.setNotchesVisible(True)
+
+        layout = QGridLayout()
+        layout.addWidget(lineEdit, 0, 0, 1, 2)
+        layout.addWidget(spinBox, 1, 0, 1, 2)
+        layout.addWidget(dateTimeEdit, 2, 0, 1, 2)
+        layout.addWidget(slider, 3, 0)
+        layout.addWidget(scrollBar, 4, 0)
+        layout.addWidget(dial, 3, 1, 2, 1)
+        layout.setRowStretch(5, 1)
+        self.bottomRightGroupBox.setLayout(layout)
+
+    def createProgressBar(self):
+        self.progressBar = QProgressBar()
+        self.progressBar.setRange(0, 10000)
+        self.progressBar.setValue(0)
+
+        timer = QTimer(self)
+        # 定时器超时，调用advanceProgressBar方法
+        timer.timeout.connect(self.advanceProgressBar)
+        timer.start(1000)
+
+
+if __name__ == &#39;__main__&#39;:
+
+    import sys
+
+    app = QApplication(sys.argv)
+    gallery = WidgetGallery()
+    gallery.show()
+    sys.exit(app.exec())
+</code></pre>
+<h3>My note</h3>
+<p>这个Python脚本使用PyQt6创建了一个图形用户界面（GUI）应用程序，展示了不同的窗口部件（widgets）并允许用户切换应用程序的样式和调色板。以下是对代码功能的简要概述：</p>
+<ol>
+<li><strong>导入必要的模块</strong>：从<code>PyQt6.QtCore</code>和<code>PyQt6.QtWidgets</code>导入所需的类。</li>
+<li><strong>定义<code>WidgetGallery</code>类</strong>：继承自<code>QDialog</code>，包含初始化方法<code>__init__</code>和其他辅助方法。<ul>
+<li><strong>初始化方法</strong>：<ul>
+<li>保存原始调色板。</li>
+<li>创建样式选择的<code>QComboBox</code>和相关的<code>QLabel</code>。</li>
+<li>创建用于选择是否使用样式标准调色板的<code>QCheckBox</code>和禁用所有部件的<code>QCheckBox</code>。</li>
+<li>创建四个不同的部件组（<code>GroupBox</code>）和一个<code>QProgressBar</code>。</li>
+<li>将各种部件的信号连接到相应的槽函数。</li>
+<li>使用布局管理器（<code>QHBoxLayout</code>和<code>QGridLayout</code>）来组织界面。</li>
+<li>设置窗口标题并应用初始样式。</li>
+</ul>
+</li>
+<li><strong><code>changeStyle</code>方法</strong>：根据选择的样式名改变应用程序的样式，并调用<code>changePalette</code>方法。</li>
+<li><strong><code>changePalette</code>方法</strong>：根据复选框的状态决定是使用样式的标准调色板还是原始调色板。</li>
+<li><strong><code>advanceProgressBar</code>方法</strong>：逐步增加进度条的值。</li>
+<li><strong>创建部件组的方法</strong>：<ul>
+<li><code>createTopLeftGroupBox</code>：创建包含单选按钮和三态复选框的组。</li>
+<li><code>createTopRightGroupBox</code>：创建包含默认按钮、切换按钮和扁平按钮的组。</li>
+<li><code>createBottomLeftTabWidget</code>：创建包含表格和文本编辑框的选项卡部件。</li>
+<li><code>createBottomRightGroupBox</code>：创建包含密码输入框、微调框、日期时间编辑框、滑块、滚动条和表盘的组。</li>
+</ul>
+</li>
+<li><strong><code>createProgressBar</code>方法</strong>：创建一个进度条，并使用定时器每秒调用一次<code>advanceProgressBar</code>方法来更新进度条。</li>
+</ul>
+</li>
+<li><strong>主程序</strong>：创建<code>QApplication</code>实例，显示<code>WidgetGallery</code>对话框，并进入应用程序的事件循环。</li>
+</ol>
+<hr>
+<h1>Lesson3 QVBOXLAYOUT</h1>
+<h3>GITHUB LESSON</h3>
+<h1>QVBoxLayout PyQt6</h1>
+<p>Layouts let you position GUI elements next to each other. <a href="https://doc.qt.io/qt-5/qvboxlayout.html"><code>QVBoxLayout</code></a> for instance arranges items vertically:</p>
+<p align="center"><img src="../screenshots/qvboxlayout-pyqt5.png" alt="QVBoxLayout PyQt6"></p>
+
+<p>The <a href="main.py">source code for this example</a> is not much more complex than for our <a href="../01%20PyQt%20QLabel">Hello World app</a>. First, we import PyQt6:</p>
+<pre><code>from PyQt6.QtWidgets import *
+</code></pre>
+<p>Then, we create the required <code>QApplication</code>:</p>
+<pre><code>app = QApplication([])
+</code></pre>
+<p>This time, we create a top-level window first. This will act as the container for the two buttons you see in the screenshot:</p>
+<pre><code>window = QWidget()
+</code></pre>
+<p><a href="https://doc.qt.io/qt-5/qwidget.html"><code>QWidget</code></a> is the most basic kind of <a href="../02%20PyQt%20Widgets">widget</a>. It would simply be empty if we didn&#39;t add any contents to it. (Kind of like a <code>&lt;div&gt;</code> element in HTML.).</p>
+<p>To tell Qt to arrange our buttons vertically, we create a <code>QVBoxLayout</code>:</p>
+<pre><code>layout = QVBoxLayout()
+</code></pre>
+<p>Then, we add the two buttons to it:</p>
+<pre><code>layout.addWidget(QPushButton(&#39;Top&#39;))
+layout.addWidget(QPushButton(&#39;Bottom&#39;))
+</code></pre>
+<p>Finally, we add the layout - and thus its contents - to the <code>window</code> we created above:</p>
+<pre><code>window.setLayout(layout)
+</code></pre>
+<p>We conclude by showing the window and (as is required) handing control over to Qt:</p>
+<pre><code>window.show()
+app.exec()
+</code></pre>
+<p>For instructions how you can run this example yourself, please see <a href="../../README.md#running-the-examples">here</a>.</p>
+<p>The related <a href="https://doc.qt.io/qt-5/qhboxlayout.html"><code>QHBoxLayout</code></a> positions items horizontally. For an even more powerful approach, see <a href="https://doc.qt.io/qt-5/qgridlayout.html"><code>QGridLayout</code></a>.</p>
+<h3>code</h3>
+<pre><code class="language-python">from PyQt6.QtWidgets import *
+# 导入 PyQt6 的 QtWidgets 模块中的所有类，这样可以方便地使用各种窗口部件类，如 QApplication、QWidget、QPushButton 等
+
+app = QApplication([])
+# 创建一个 QApplication 实例，它是 PyQt 应用程序的基础，负责管理应用程序的生命周期和资源，
+# [] 表示可以传入命令行参数，但这里没有传入任何参数
+
+window = QWidget()
+# 创建一个 QWidget 实例，它是 PyQt 中所有用户界面元素的基类，这里作为主窗口
+
+layout = QVBoxLayout()
+# 创建一个垂直布局管理器 QVBoxLayout，它会将添加到其中的部件按照垂直方向排列
+
+layout.addWidget(QPushButton(&#39;Top&#39;))
+# 向垂直布局中添加一个带有文本 &#39;Top&#39; 的 QPushButton 部件，该按钮将显示在布局的顶部
+
+layout.addWidget(QPushButton(&#39;Bottom&#39;))
+# 向垂直布局中添加另一个带有文本 &#39;Bottom&#39; 的 QPushButton 部件，该按钮将显示在布局的底部，位于 &#39;Top&#39; 按钮下方
+
+window.setLayout(layout)
+# 将创建的垂直布局设置为窗口的布局，这样窗口中的部件就会按照布局的规则进行排列
+
+window.show()
+# 显示窗口及其包含的部件，使其在屏幕上可见
+
+app.exec()
+# 进入应用程序的主事件循环，开始处理用户输入、窗口更新等事件，直到应用程序退出
+</code></pre>
+<h3>My note：</h3>
+<ul>
+<li><strong>PyQt 基础结构</strong>：<ul>
+<li>首先需要导入必要的模块，<code>from PyQt6.QtWidgets import *</code> 是一种简便的导入方式，但在大型项目中可能会导致命名空间污染，更好的做法是按需导入具体的类。</li>
+<li><code>QApplication</code> 是整个应用程序的核心，负责初始化和管理应用程序的各种资源和设置，每个 PyQt 应用程序都必须有且仅有一个 <code>QApplication</code> 实例。</li>
+<li><code>QWidget</code> 是构建用户界面的基础组件，可以作为独立的窗口，也可以作为其他部件的容器。</li>
+</ul>
+</li>
+<li><strong>布局管理器</strong>：<ul>
+<li><code>QVBoxLayout</code> 是布局管理器的一种，它按照垂直方向排列部件。通过 <code>addWidget</code> 方法将部件添加到布局中，布局管理器会自动处理部件的大小和位置，使得界面在不同的窗口大小下都能保持合适的布局，这有助于实现界面的自适应和美观性。</li>
+</ul>
+</li>
+<li><strong>部件创建与添加</strong>：<ul>
+<li><code>QPushButton</code> 是常用的按钮部件，通过创建实例并传入按钮文本，可以快速创建一个带有特定文本的按钮。将按钮添加到布局中，而不是直接添加到窗口，体现了布局管理器对部件布局的控制作用，使得界面的布局更加灵活和易于维护。</li>
+</ul>
+</li>
+<li><strong>事件循环</strong>：<ul>
+<li><code>app.exec()</code> 启动应用程序的事件循环，这是应用程序能够持续响应和处理用户操作（如点击按钮、移动窗口等）的关键。在事件循环中，应用程序会不断地监听和处理各种事件，直到用户关闭应用程序或者通过代码触发退出条件。</li>
+</ul>
+</li>
+</ul>
+<p>总之，这段代码展示了一个简单的 PyQt 应用程序的基本结构，包括应用程序的创建、窗口和部件的构建、布局管理以及事件循环的启动，是学习 PyQt 编程的重要基础示例。 </p>
+<hr>
+<h1>Lesson4  PyQt Signals and Slots</h1>
+<h2>github lesson</h2>
+<h1>PyQt Signals and Slots</h1>
+<p>PyQt Signals let you react to user input such as mouse clicks. A <em>slot</em> is a function that gets called when such an event occurs. The file <a href="main.py"><code>main.py</code></a> in this directory shows this in action: When the user clicks a button, a popup appears:</p>
+<p align="center"><img src="../screenshots/pyqt-signals-and-slots.jpg" alt="PyQt Signals and Slots"></p>
+
+<p>The code begins in the usual way. First, we import PyQt6 and create a <code>QApplication</code>:</p>
+<pre><code>from PyQt6.QtWidgets import *
+app = QApplication([])
+</code></pre>
+<p>Next, we create a button:</p>
+<pre><code>button = QPushButton(&#39;Click&#39;)
+</code></pre>
+<p>Then we define a function. It will be called when the user clicks the button. You can see that it shows an alert:</p>
+<pre><code>def on_button_clicked():
+    alert = QMessageBox()
+    alert.setText(&#39;You clicked the button!&#39;)
+    alert.exec()
+</code></pre>
+<p>And here is where signals and slots come into play: We instruct Qt to invoke our function by <em>connecting</em> it to the <code>.clicked</code> signal of our button:</p>
+<pre><code>button.clicked.connect(on_button_clicked)
+</code></pre>
+<p>Finally, we show the button on the screen and hand control over to Qt:</p>
+<pre><code>button.show()
+app.exec()
+</code></pre>
+<p>For instructions how you can run this example yourself, please see <a href="../../README.md#running-the-examples">here</a>.</p>
+<h2>code</h2>
+<pre><code class="language-python"># 从 PyQt6 的 QtWidgets 模块中导入所有类
+# 这样可以直接使用该模块下的各种窗口部件类，如 QApplication、QPushButton、QMessageBox 等
+from PyQt6.QtWidgets import *
+
+# 创建 QApplication 实例
+# 这是 PyQt 应用程序的基础，管理应用程序的控制流和主要设置
+# 传入的空列表 [] 可用于接收命令行参数，这里未传入任何参数
+app = QApplication([])
+
+# 创建一个 QPushButton 实例
+# 按钮上显示的文本为 &#39;Click&#39;
+button = QPushButton(&#39;Click&#39;)
+
+# 定义一个函数，当按钮被点击时会执行这个函数
+def on_button_clicked():
+    # 创建一个 QMessageBox 实例
+    alert = QMessageBox()
+    # 设置消息框显示的文本内容
+    alert.setText(&#39;You clicked the button!\n阿米诺斯&#39;)
+    # 显示消息框并进入模态循环，等待用户响应
+    alert.exec()
+
+# 将按钮的 clicked 信号与 on_button_clicked 函数连接
+# 当按钮被点击时，会自动调用 on_button_clicked 函数
+button.clicked.connect(on_button_clicked)
+
+# 显示按钮
+button.show()
+
+# 启动应用程序的事件循环
+# 应用程序开始监听和处理各种事件，直到应用程序退出
+app.exec()
+</code></pre>
+<h3>学习笔记</h3>
+<ol>
+<li><strong>PyQt 应用程序基础结构</strong><ul>
+<li><strong>导入模块</strong>：通过 <code>from PyQt6.QtWidgets import *</code> 导入 <code>QtWidgets</code> 模块中的所有类，为后续使用各种窗口部件提供基础。虽然这种导入方式简洁，但在大型项目中可能导致命名冲突，更好的做法是按需导入特定类，如 <code>from PyQt6.QtWidgets import QApplication, QPushButton, QMessageBox</code>。</li>
+<li><strong>创建 <code>QApplication</code> 实例</strong>：每个 PyQt 应用程序都必须有一个 <code>QApplication</code> 对象，它负责管理应用程序的控制流、事件处理以及资源管理等重要任务。</li>
+</ul>
+</li>
+<li><strong>按钮部件 <code>QPushButton</code></strong><ul>
+<li><strong>创建按钮</strong>：使用 <code>QPushButton(&#39;Click&#39;)</code> 创建一个按钮实例，并将其赋值给 <code>button</code> 变量。在创建时可以指定按钮上显示的文本。</li>
+<li><strong>连接信号与槽函数</strong>：通过 <code>button.clicked.connect(on_button_clicked)</code> 将按钮的 <code>clicked</code> 信号（当按钮被点击时发出）与自定义的 <code>on_button_clicked</code> 函数（槽函数）连接起来。这是 PyQt 中实现事件驱动编程的关键机制，使得我们可以在特定事件发生时执行相应的操作。</li>
+</ul>
+</li>
+<li><strong>消息框 <code>QMessageBox</code></strong><ul>
+<li><strong>定义槽函数</strong>：在 <code>on_button_clicked</code> 函数中，创建了一个 <code>QMessageBox</code> 实例 <code>alert</code>。通过 <code>alert.setText(&#39;You clicked the button!&#39;)</code> 设置消息框中显示的文本内容，然后使用 <code>alert.exec()</code> 显示消息框并进入模态循环，等待用户响应（例如点击确定按钮）。模态消息框会阻止用户与应用程序的其他部分进行交互，直到用户关闭该消息框。</li>
+</ul>
+</li>
+<li><strong>显示部件与事件循环</strong><ul>
+<li><strong>显示按钮</strong>：使用 <code>button.show()</code> 使按钮在应用程序界面中可见。</li>
+<li><strong>启动事件循环</strong>：<code>app.exec()</code> 启动应用程序的事件循环，这使得应用程序能够监听用户的操作（如鼠标点击、键盘输入等事件），并根据事件的类型调用相应的处理函数（如这里按钮点击对应的 <code>on_button_clicked</code> 函数）。只有调用了这个方法，应用程序才会真正开始运行并响应用户操作，直到用户关闭应用程序，事件循环结束，应用程序退出。</li>
+</ul>
+</li>
+</ol>
+<p>通过这段代码，我们学习了如何在 PyQt 中创建一个简单的用户交互界面，包括按钮的创建与事件处理，以及消息框的使用，这是构建更复杂 PyQt 应用程序的基础。 </p>
+<hr>
+<h1>LESSON5</h1>
+<h2>GITHUB LESSON</h2>
+<h1>Qt Designer Python</h1>
+<p><a href="https://build-system.fman.io/qt-designer-download">Qt Designer</a> is a graphical tool for building Qt GUIs:</p>
+<p align="center"><img src="../screenshots/qt-designer-windows.png" alt="Qt Designer screenshot on Windows"></p>
+
+<p>It produces <code>.ui</code> files. You can load these files from C++ or Python to display the GUI.</p>
+<p>The dialog in the following screenshot comes from the file <a href=".ui/dialog.ui"><code>dialog.ui</code></a> in this directory:</p>
+<p align="center"><img src="../screenshots/qt-designer-python.png" alt="Qt Designer Python"></p>
+
+<p>The <a href="main.py"><code>main.py</code></a> script (also in this directory) loads and invokes <code>dialog.ui</code> from Python. The steps with which it does this are quite easy.</p>
+<p>First, <a href="main.py"><code>main.py</code></a> imports the <code>uic</code> module from PyQt6:</p>
+<pre><code>from PyQt6 import uic
+</code></pre>
+<p>It also imports <code>QApplication</code>. Like all (Py)Qt apps, we must create an instance of this class.</p>
+<pre><code>from PyQt6.QtWidgets import QApplication
+</code></pre>
+<p>Then, we use <a href="https://www.riverbankcomputing.com/static/Docs/PyQt6/designer.html#PyQt6.uic.loadUiType"><code>uic.loadUiType(...)</code></a> to load the <code>.ui</code> file. This returns two classes, which we call <code>Form</code> and <code>Window</code>:</p>
+<pre><code>Form, Window = uic.loadUiType(&quot;dialog.ui&quot;)
+</code></pre>
+<p>The first is an ordinary Python class. It has a <code>.setupUi(...)</code> method which takes a single parameter, the <a href="../02%20PyQt%20Widgets">widget</a> in which the UI should be displayed. The type of this parameter is given by the second class, <code>Window</code>. This is configured in Qt Designer and is usually one of <code>QDialog</code>, <code>QMainWindow</code> or <code>QWidget</code>.</p>
+<p>To show the UI, we thus proceed as follows. First, we create the necessary <code>QApplication</code>:</p>
+<pre><code>app = QApplication([])
+</code></pre>
+<p>Then, we instantiate the <code>Window</code> class. It will act as the container for our user interface:</p>
+<pre><code>window = Window()
+</code></pre>
+<p>Next, we instantiate the <code>Form</code>. We invoke its <code>.setupUi(...)</code> method, passing the window as a parameter:</p>
+<pre><code>form = Form()
+form.setupUi(window)
+</code></pre>
+<p>We&#39;ve now connected the necessary components for displaying the user interface given in the <code>.ui</code> file. All that remains is to <code>.show()</code> the window and kick off Qt&#39;s event processing mechanism:</p>
+<pre><code>window.show()
+app.exec()
+</code></pre>
+<p>For instructions how to run this example yourself, please see <a href="../../README.md#running-the-examples">here</a>.</p>
+<h2>code</h2>
+<pre><code class="language-python">from PyQt6 import uic
+from PyQt6.QtWidgets import QApplication
+
+Form, Window = uic.loadUiType(&quot;dialog.ui&quot;)
+
+app = QApplication([])
+window = Window()
+form = Form()
+form.setupUi(window)
+window.show()
+app.exec()
+</code></pre>
+<pre><code class="language-ui">&lt;?xml version=&quot;1.0&quot; encoding=&quot;UTF-8&quot;?&gt;
+&lt;ui version=&quot;4.0&quot;&gt;
+ &lt;class&gt;Dialog&lt;/class&gt;
+ &lt;widget class=&quot;QDialog&quot; name=&quot;Dialog&quot;&gt;
+  &lt;property name=&quot;geometry&quot;&gt;
+   &lt;rect&gt;
+    &lt;x&gt;0&lt;/x&gt;
+    &lt;y&gt;0&lt;/y&gt;
+    &lt;width&gt;197&lt;/width&gt;
+    &lt;height&gt;72&lt;/height&gt;
+   &lt;/rect&gt;
+  &lt;/property&gt;
+  &lt;property name=&quot;windowTitle&quot;&gt;
+   &lt;string&gt;Dialog&lt;/string&gt;
+  &lt;/property&gt;
+  &lt;widget class=&quot;QDialogButtonBox&quot; name=&quot;buttonBox&quot;&gt;
+   &lt;property name=&quot;geometry&quot;&gt;
+    &lt;rect&gt;
+     &lt;x&gt;-160&lt;/x&gt;
+     &lt;y&gt;20&lt;/y&gt;
+     &lt;width&gt;341&lt;/width&gt;
+     &lt;height&gt;32&lt;/height&gt;
+    &lt;/rect&gt;
+   &lt;/property&gt;
+   &lt;property name=&quot;orientation&quot;&gt;
+    &lt;enum&gt;Qt::Horizontal&lt;/enum&gt;
+   &lt;/property&gt;
+   &lt;property name=&quot;standardButtons&quot;&gt;
+    &lt;set&gt;QDialogButtonBox::Cancel|QDialogButtonBox::Ok&lt;/set&gt;
+   &lt;/property&gt;
+  &lt;/widget&gt;
+ &lt;/widget&gt;
+ &lt;resources/&gt;
+ &lt;connections&gt;
+  &lt;connection&gt;
+   &lt;sender&gt;buttonBox&lt;/sender&gt;
+   &lt;signal&gt;accepted()&lt;/signal&gt;
+   &lt;receiver&gt;Dialog&lt;/receiver&gt;
+   &lt;slot&gt;accept()&lt;/slot&gt;
+   &lt;hints&gt;
+    &lt;hint type=&quot;sourcelabel&quot;&gt;
+     &lt;x&gt;248&lt;/x&gt;
+     &lt;y&gt;254&lt;/y&gt;
+    &lt;/hint&gt;
+    &lt;hint type=&quot;destinationlabel&quot;&gt;
+     &lt;x&gt;157&lt;/x&gt;
+     &lt;y&gt;274&lt;/y&gt;
+    &lt;/hint&gt;
+   &lt;/hints&gt;
+  &lt;/connection&gt;
+  &lt;connection&gt;
+   &lt;sender&gt;buttonBox&lt;/sender&gt;
+   &lt;signal&gt;rejected()&lt;/signal&gt;
+   &lt;receiver&gt;Dialog&lt;/receiver&gt;
+   &lt;slot&gt;reject()&lt;/slot&gt;
+   &lt;hints&gt;
+    &lt;hint type=&quot;sourcelabel&quot;&gt;
+     &lt;x&gt;316&lt;/x&gt;
+     &lt;y&gt;260&lt;/y&gt;
+    &lt;/hint&gt;
+    &lt;hint type=&quot;destinationlabel&quot;&gt;
+     &lt;x&gt;286&lt;/x&gt;
+     &lt;y&gt;274&lt;/y&gt;
+    &lt;/hint&gt;
+   &lt;/hints&gt;
+  &lt;/connection&gt;
+ &lt;/connections&gt;
+&lt;/ui&gt;
+</code></pre>
+<h3>My note</h3>
+<ol>
+<li><strong>Qt Designer 概述</strong><ul>
+<li>Qt Designer 是一个用于构建 Qt 图形用户界面（GUIs）的图形化工具，它生成的 <code>.ui</code> 文件可以在 C++ 或 Python 中加载以显示相应的 GUI。例如，通过它设计的对话框等界面元素，能够直观地进行布局和组件设置，提高界面开发效率。</li>
+</ul>
+</li>
+<li><strong>代码实现步骤</strong><ul>
+<li><strong>导入必要模块</strong>：<ul>
+<li>从 PyQt6 导入 <code>uic</code> 模块，用于加载 <code>.ui</code> 文件，以及从 <code>PyQt6.QtWidgets</code> 导入 <code>QApplication</code>，这是每个 (Py)Qt 应用程序都必需的，用于管理应用程序的控制流和资源。</li>
+</ul>
+</li>
+<li><strong>加载 <code>.ui</code> 文件</strong>：<ul>
+<li>使用 <code>uic.loadUiType(&quot;dialog.ui&quot;)</code> 加载 <code>.ui</code> 文件，该操作会返回两个类，分别命名为 <code>Form</code> 和 <code>Window</code>。<code>Form</code> 类具有一个 <code>.setupUi(...)</code> 方法，用于将 <code>.ui</code> 文件中的界面设置到一个 <code>Window</code> 类型的容器中，<code>Window</code> 类的类型通常是 <code>QDialog</code>、<code>QMainWindow</code> 或 <code>QWidget</code> 之一，其具体类型在 Qt Designer 中配置。</li>
+</ul>
+</li>
+<li><strong>显示界面</strong>：<ul>
+<li>首先创建 <code>QApplication</code> 实例：<code>app = QApplication([])</code>，这是应用程序的基础，负责初始化和管理应用程序的各种资源和设置。</li>
+<li>然后实例化 <code>Window</code> 类：<code>window = Window()</code>，它将作为用户界面的容器。</li>
+<li>接着实例化 <code>Form</code> 类，并调用其 <code>.setupUi(...)</code> 方法，将 <code>window</code> 作为参数传入：<code>form = Form(); form.setupUi(window)</code>，这样就完成了将 <code>.ui</code> 文件中的界面加载到 <code>window</code> 容器中的操作。</li>
+<li>最后通过 <code>window.show()</code> 显示窗口，并使用 <code>app.exec()</code> 启动应用程序的事件循环，使应用程序能够响应和处理用户的各种操作，如鼠标点击、键盘输入等，直到应用程序退出。</li>
+</ul>
+</li>
+</ul>
+</li>
+<li><strong><code>.ui</code> 文件结构（示例）</strong><ul>
+<li>以提供的 <code>dialog.ui</code> 文件为例，它是一个 XML 格式的文件，包含了界面的布局和组件信息。</li>
+<li>有一个顶级的 <code>QDialog</code> 类的 <code>widget</code>，设置了其 <code>geometry</code>（位置和大小）和 <code>windowTitle</code> 等属性。</li>
+<li>包含一个 <code>QDialogButtonBox</code> 组件，设置了其 <code>geometry</code>、<code>orientation</code>（水平方向）以及 <code>standardButtons</code>（包含取消和确定按钮）等属性，并且通过 <code>connections</code> 定义了按钮的信号（如 <code>accepted()</code> 和 <code>rejected()</code>）与对话框的槽函数（<code>accept()</code> 和 <code>reject()</code>）的连接关系，这些信号和槽函数的连接使得在用户点击按钮时能够执行相应的操作，如关闭对话框或进行特定的业务逻辑处理。</li>
+</ul>
+</li>
+</ol>
+<p>通过使用 Qt Designer 和上述代码实现方式，可以方便地创建和显示 Qt 应用程序的图形用户界面，提高开发效率和界面的可视化设计效果，同时利用信号和槽机制实现用户与界面的交互功能。 </p>
+
+<hr>
+<h1>LESSON6</h1>
+<h1>QML Python example</h1>
+<p>Qt can be broadly split into two technologies: <em>Qt Widgets</em> is the old core. It displays GUI elements in a way that is typical for operating systems such as Windows or macOS. A more recent alternative is <em>Qt Quick</em>. This technology is optimized for mobile and touch screen devices. It is better suited for very custom graphics and fluid animations.</p>
+<p>Qt Quick uses a markup language called QML. This example shows how you can combine QML with Python.</p>
+<p align="center"><img src="../screenshots/qml-python-example.png" alt="QML Python Example"></p>
+
+<p>The sample application displays a pin wheel in front of some hills. When you click with the mouse, the wheel rotates.</p>
+<p>The QML code lies in <a href="main.qml"><code>main.qml</code></a>. It&#39;s a testament to QML that it is quite easy to read:</p>
+<pre><code>import QtQuick 2.2
+import QtQuick.Window 2.2
+
+Window {
+    Image {
+        id: background
+        source: &quot;background.png&quot;
+    }
+    Image {
+        id: wheel
+        anchors.centerIn: parent
+        source: &quot;pinwheel.png&quot;
+        Behavior on rotation {
+            NumberAnimation {
+                duration: 250
+            }
+        }
+    }
+    MouseArea {
+        anchors.fill: parent
+        onPressed: {
+            wheel.rotation += 90
+        }
+    }
+    visible: true
+    width: background.width
+    height: background.height
+}
+</code></pre>
+<p>Executing the QML from Python is even easier. The code is in <a href="main.py"><code>main.py</code></a>:</p>
+<pre><code>from PyQt6.QtQml import QQmlApplicationEngine
+from PyQt6.QtWidgets import QApplication
+
+app = QApplication([])
+engine = QQmlApplicationEngine()
+engine.load(&quot;main.qml&quot;)
+app.exec()
+</code></pre>
+<p>If you&#39;d like further instructions how you can run this code for yourself, please see <a href="../../README.md#running-the-examples">here</a>.</p>
+<p>Some code in this directory has special license requirements. For more information, please see <a href="LICENSE.md"><code>LICENSE.md</code></a>.</p>
+<h3>code</h3>
+<pre><code class="language-qmllang">import QtQuick 2.2
+import QtQuick.Window 2.2
+
+Window {
+    Image {
+        id: background
+        source: &quot;background.png&quot;
+    }
+    Image {
+        id: wheel
+        anchors.centerIn: parent
+        source: &quot;pinwheel.png&quot;
+        Behavior on rotation {
+            NumberAnimation {
+                duration: 250
+            }
+        }
+    }
+    MouseArea {
+        anchors.fill: parent
+        onPressed: {
+            wheel.rotation += 90
+        }
+    }
+    visible: true
+    width: background.width
+    height: background.height
+}
+</code></pre>
+<pre><code class="language-python">from PyQt6.QtQml import QQmlApplicationEngine
+from PyQt6.QtWidgets import QApplication
+
+app = QApplication([])
+engine = QQmlApplicationEngine()
+engine.load(&quot;main.qml&quot;)
+app.exec()
+</code></pre>
+<h3>MY NOTE</h3>
+<ol>
+<li><strong>Qt 技术概述</strong><ul>
+<li>Qt 主要分为两大技术：Qt Widgets 是其传统核心，在 Windows 或 macOS 等操作系统上以常见的方式显示 GUI 元素；Qt Quick 则是较新的技术，针对移动和触摸屏设备进行了优化，更适合实现高度定制的图形和流畅的动画效果。</li>
+</ul>
+</li>
+<li><strong>QML 简介</strong><ul>
+<li>Qt Quick 使用 QML（Qt Meta-Object Language）这种标记语言。以示例中的 <code>main.qml</code> 文件为例，它的语法相对简洁且易读。</li>
+<li>通过 <code>import</code> 语句引入必要的模块，如 <code>import QtQuick 2.2</code> 和 <code>import QtQuick.Window 2.2</code>，这类似于其他编程语言中的导入库操作，为后续使用相关功能提供支持。</li>
+<li>在 <code>Window</code> 元素内部，定义了多个子元素：<ul>
+<li><code>Image</code> 元素用于显示图片，如 <code>background</code> 图片（通过 <code>source: &quot;background.png&quot;</code> 指定图片路径）作为背景，<code>wheel</code> 图片（<code>source: &quot;pinwheel.png&quot;</code>）作为前景中的风车。对于 <code>wheel</code> 元素，还通过 <code>Behavior on rotation</code> 定义了其旋转动画，当旋转属性发生变化时，会触发一个持续 250 毫秒的 <code>NumberAnimation</code>，实现了平滑的旋转效果。</li>
+<li><code>MouseArea</code> 元素用于处理鼠标事件，通过 <code>anchors.fill: parent</code> 使其覆盖整个父元素（即 <code>Window</code>），当检测到鼠标按下（<code>onPressed</code>）事件时，会使 <code>wheel</code> 的旋转角度增加 90 度，从而实现了交互效果，即每次点击鼠标，风车会旋转 90 度。</li>
+</ul>
+</li>
+</ul>
+</li>
+<li><strong>Python 与 QML 结合</strong><ul>
+<li>在 <code>main.py</code> 文件中展示了如何从 Python 执行 QML 代码。</li>
+<li>首先导入必要的类：<code>from PyQt6.QtQml import QQmlApplicationEngine</code> 和 <code>from PyQt6.QtWidgets import QApplication</code>。</li>
+<li>创建 <code>QApplication</code> 实例：<code>app = QApplication([])</code>，这是整个应用程序的基础，负责管理应用程序的生命周期和资源。</li>
+<li>接着创建 <code>QQmlApplicationEngine</code> 实例：<code>engine = QQmlApplicationEngine()</code>，这个引擎用于加载和运行 QML 文件。</li>
+<li>通过 <code>engine.load(&quot;main.qml&quot;)</code> 加载 <code>main.qml</code> 文件，将 QML 定义的界面和交互逻辑加载到应用程序中。</li>
+<li>最后使用 <code>app.exec()</code> 启动应用程序的事件循环，使得应用程序能够响应和处理用户的操作，如鼠标点击等事件，直到应用程序退出。</li>
+</ul>
+</li>
+</ol>
+<p>通过这个示例，学习到了 Qt 中不同技术方向（Qt Widgets 和 Qt Quick）的特点，以及如何使用 QML 构建界面和交互逻辑，并掌握了从 Python 中执行 QML 代码的方法，这为开发跨平台且具有丰富交互效果的应用程序提供了基础，特别是在移动和触摸屏设备相关的应用开发中具有重要的应用价值。 </p>
+
+<hr>
+<h1>LESSON7</h1>
+<h1>Qt Text Editor</h1>
+<p>This example implements a simple text editor with (Py)Qt.</p>
+<p><img src="../screenshots/qt-text-editor-windows.png" alt="Qt Text Editor"> <img src="../screenshots/qmenu-example.png" alt="QMenu example"></p>
+<p><img src="../screenshots/qt-qmenu.png" alt="Qt QMenu"> <img src="../screenshots/qdialog-example.png" alt="QDialog example"></p>
+<p><img src="../screenshots/qmessagebox-example.png" alt="QMessageBox example"></p>
+<p>It has a surprising number of features:</p>
+<ul>
+<li>A <em>File</em> menu for opening and saving files.</li>
+<li>Keyboard shortcuts.</li>
+<li>An <em>About</em> dialog.</li>
+<li>A warning <em>Do you want to save before quitting?</em> if there are unmodified changes.</li>
+</ul>
+<p>The full source code is in <a href="main.py"><code>main.py</code></a>. For instructions on how to run it, please see <a href="../../README.md#running-the-examples">here</a>.</p>
+<h2>code</h2>
+<pre><code class="language-python">from PyQt6.QtWidgets import *
+from PyQt6.QtGui import QKeySequence, QAction
+
+# 自定义主窗口类，继承自 QMainWindow
+class MainWindow(QMainWindow):
+    # 重写 closeEvent 方法，用于处理窗口关闭事件
+    def closeEvent(self, e):
+        # 检查文本是否被修改且未保存
+        if not text.document().isModified():
+            return
+        # 弹出一个对话框，询问用户在关闭前是否保存更改
+        answer = QMessageBox.question(
+            window, None,
+            &quot;You have unsaved changes. Save before closing?&quot;,
+            QMessageBox.Save | QMessageBox.Discard | QMessageBox.Cancel
+        )
+        # 如果用户选择保存
+        if answer &amp; QMessageBox.Save:
+            save()
+            # 再次检查文本是否仍有未保存的修改（例如用户在保存对话框中取消操作）
+            if text.document().isModified():
+                # 这种情况发生在用户关闭“另存为...”对话框时
+                # 我们不希望在这种情况下关闭窗口，因为这会丢弃未保存的更改
+                e.ignore()
+        # 如果用户选择取消关闭窗口
+        elif answer &amp; QMessageBox.Cancel:
+            e.ignore()
+
+# 创建 QApplication 实例，这是 PyQt 应用程序的基础
+app = QApplication([])
+# 设置应用程序的名称，这可能会在窗口标题栏等地方显示
+app.setApplicationName(&quot;Text Editor&quot;)
+# 创建一个 QPlainTextEdit 实例，用于显示和编辑文本
+text = QPlainTextEdit()
+# 创建主窗口实例
+window = MainWindow()
+# 将文本编辑框设置为主窗口的中心部件
+window.setCentralWidget(text)
+
+# 用于存储当前打开文件的路径，初始化为 None
+file_path = None
+
+# 获取主窗口的菜单栏，并添加一个名为“&amp;File”的菜单
+menu = window.menuBar().addMenu(&quot;&amp;File&quot;)
+
+# 创建一个“打开”操作的 QAction 实例
+open_action = QAction(&quot;&amp;Open&quot;)
+# 定义“打开”操作的触发函数
+def open_file():
+    global file_path
+    # 弹出文件打开对话框，获取用户选择的文件路径
+    path = QFileDialog.getOpenFileName(window, &quot;Open&quot;)[0]
+    if path:
+        # 如果选择了文件，读取文件内容并设置到文本编辑框中
+        text.setPlainText(open(path).read())
+        # 更新当前文件路径
+        file_path = path
+# 将“打开”操作的触发信号连接到 open_file 函数
+open_action.triggered.connect(open_file)
+# 设置“打开”操作的快捷键为标准的打开快捷键
+open_action.setShortcut(QKeySequence.StandardKey.Open)
+# 将“打开”操作添加到“File”菜单中
+menu.addAction(open_action)
+
+# 创建一个“保存”操作的 QAction 实例
+save_action = QAction(&quot;&amp;Save&quot;)
+# 定义“保存”操作的触发函数
+def save():
+    # 如果当前没有文件路径（即文件未保存过）
+    if file_path is None:
+        save_as()
+    else:
+        # 如果有文件路径，将文本编辑框中的内容写入文件
+        with open(file_path, &quot;w&quot;) as f:
+            f.write(text.toPlainText())
+        # 将文本文档的修改状态设置为 False，表示已保存
+        text.document().setModified(False)
+# 将“保存”操作的触发信号连接到 save 函数
+save_action.triggered.connect(save)
+# 设置“保存”操作的快捷键为标准的保存快捷键
+save_action.setShortcut(QKeySequence.StandardKey.Save)
+# 将“保存”操作添加到“File”菜单中
+menu.addAction(save_action)
+
+# 创建一个“另存为...”操作的 QAction 实例
+save_as_action = QAction(&quot;Save &amp;As...&quot;)
+# 定义“另存为...”操作的触发函数
+def save_as():
+    global file_path
+    # 弹出文件保存对话框，获取用户选择的保存路径
+    path = QFileDialog.getSaveFileName(window, &quot;Save As&quot;)[0]
+    if path:
+        # 更新文件路径
+        file_path = path
+        save()
+# 将“另存为...”操作的触发信号连接到 save_as 函数
+save_as_action.triggered.connect(save_as)
+# 将“另存为...”操作添加到“File”菜单中
+menu.addAction(save_as_action)
+
+# 创建一个“关闭”操作的 QAction 实例
+close = QAction(&quot;&amp;Close&quot;)
+# 将“关闭”操作的触发信号连接到窗口的 close 方法，用于关闭窗口
+close.triggered.connect(window.close)
+# 将“关闭”操作添加到“File”菜单中
+menu.addAction(close)
+
+# 获取主窗口的菜单栏，并添加一个名为“&amp;Help”的菜单
+help_menu = window.menuBar().addMenu(&quot;&amp;Help&quot;)
+# 创建一个“关于”操作的 QAction 实例
+about_action = QAction(&quot;&amp;About&quot;)
+# 将“关于”操作添加到“Help”菜单中
+help_menu.addAction(about_action)
+# 定义“关于”操作的触发函数，用于显示关于对话框
+def show_about_dialog():
+    text = &quot;&lt;center&gt;&quot; \
+           &quot;&lt;h1&gt;Text Editor&lt;/h1&gt;&quot; \
+           &quot;&amp;#8291;&quot; \
+           &quot;&lt;img src=icon.svg&gt;&quot; \
+           &quot;&lt;/center&gt;&quot; \
+           &quot;&lt;p&gt;Version 31.4.159.265358&lt;br/&gt;&quot; \
+           &quot;Copyright &amp;copy; Company Inc.&lt;/p&gt;&quot;
+    QMessageBox.about(window, &quot;About Text Editor&quot;, text)
+# 将“关于”操作的触发信号连接到 show_about_dialog 函数
+about_action.triggered.connect(show_about_dialog)
+
+# 显示主窗口
+window.show()
+# 启动应用程序的事件循环，使应用程序开始运行并处理事件
+app.exec()
+</code></pre>
+<h3>MY NOTE</h3>
+<ul>
+<li><strong>应用程序基础结构</strong><ul>
+<li><strong>导入模块</strong>：从 <code>PyQt6.QtWidgets</code> 导入所有类，用于创建各种窗口部件；从 <code>PyQt6.QtGui</code> 导入 <code>QKeySequence</code> 和 <code>QAction</code>，<code>QKeySequence</code> 用于设置快捷键，<code>QAction</code> 用于创建可执行的操作（如菜单中的选项）。</li>
+<li><strong>创建应用程序和主窗口</strong>：首先创建 <code>QApplication</code> 实例 <code>app</code>，这是整个 PyQt 应用程序的核心，负责管理应用程序的生命周期和资源。然后创建自定义的 <code>MainWindow</code> 类的实例 <code>window</code>，并设置其中心部件为 <code>QPlainTextEdit</code> 实例 <code>text</code>，用于显示和编辑文本内容。</li>
+</ul>
+</li>
+<li><strong>菜单和操作</strong><ul>
+<li><strong>文件菜单</strong>：<ul>
+<li><strong>打开操作</strong>：创建 <code>QAction</code> 实例 <code>open_action</code>，设置其显示文本为“&amp;Open”（其中“&amp;”用于设置快捷键提示，即 <code>Alt+O</code>），并通过 <code>QFileDialog.getOpenFileName</code> 弹出文件打开对话框获取用户选择的文件路径，读取文件内容并设置到文本编辑框 <code>text</code> 中，同时更新 <code>file_path</code> 变量。将 <code>open_action</code> 的触发信号连接到 <code>open_file</code> 函数，并设置其快捷键为标准的打开快捷键 <code>QKeySequence.StandardKey.Open</code>，最后添加到“File”菜单中。</li>
+<li><strong>保存操作</strong>：创建 <code>QAction</code> 实例 <code>save_action</code>，显示文本为“&amp;Save”，快捷键为 <code>QKeySequence.StandardKey.Save</code>。在 <code>save</code> 函数中，首先判断 <code>file_path</code> 是否为 <code>None</code>，如果是则调用 <code>save_as</code> 函数，否则将文本编辑框中的内容写入当前文件路径对应的文件中，并将文本文档的修改状态设置为 <code>False</code>，表示已保存。将 <code>save_action</code> 的触发信号连接到 <code>save</code> 函数后添加到“File”菜单中。</li>
+<li><strong>另存为操作</strong>：创建 <code>QAction</code> 实例 <code>save_as_action</code>，显示文本为“Save &amp;As...”。在 <code>save_as</code> 函数中，通过 <code>QFileDialog.getSaveFileName</code> 获取用户选择的保存路径，更新 <code>file_path</code> 变量后调用 <code>save</code> 函数进行保存。将 <code>save_as_action</code> 连接到 <code>save_as</code> 函数并添加到“File”菜单中。</li>
+<li><strong>关闭操作</strong>：创建 <code>QAction</code> 实例 <code>close</code>，显示文本为“&amp;Close”，将其触发信号连接到 <code>window.close</code> 方法，实现关闭窗口的功能，并添加到“File”菜单中。</li>
+</ul>
+</li>
+<li><strong>帮助菜单</strong>：创建“&amp;Help”菜单，并在其中添加“&amp;About”操作。在 <code>show_about_dialog</code> 函数中，使用 <code>QMessageBox.about</code> 弹出一个关于对话框，显示应用程序的名称、版本和版权信息等。</li>
+</ul>
+</li>
+<li><strong>窗口关闭事件处理</strong>：在 <code>MainWindow</code> 类中重写 <code>closeEvent</code> 方法，用于处理窗口关闭时的情况。如果文本编辑框中的内容有未保存的修改，会弹出一个对话框询问用户是否保存、丢弃或取消关闭操作。根据用户的选择执行相应的操作，如保存文件、忽略关闭事件等，确保用户不会意外丢失未保存的修改内容。</li>
+</ul>
+<p>通过这段代码，学习了如何使用 PyQt6 创建一个具有基本文件操作（打开、保存、另存为）和帮助菜单（关于对话框）的文本编辑器应用程序，包括应用程序的结构搭建、菜单和操作的创建与连接，以及窗口关闭事件的处理，这为进一步开发功能更丰富的文本处理或其他类型的应用程序提供了基础。 </p>
+
+<hr>
+<h1>Lesson8</h1>
+<h1>PyQt6 exe</h1>
+<p>Once you have a PyQt6 application, you want to compile your Python source code into a standalone executable. Furthermore, you normally want to create an installer so your users can easily set up your app.</p>
+<p>This example uses <a href="https://build-system.fman.io">fbs</a> to create a standalone executable and an installer for the text editor in <a href="../07%20Qt%20Text%20Editor">example 07</a>.</p>
+<p><img src="../screenshots/pyqt5-exe.png" alt="PyQt6 exe installer" height="250px"> <img src="../screenshots/pyqt5-installer-mac.png" alt="Installer for a PyQt6 Mac application" height="250px"></p>
+<p>You can find a modified version of the <a href="../07%20Qt%20Text%20Editor/main.py">&quot;old&quot; main.py</a> in <a href="src/main/python/main.py"><code>src/main/python/main.py</code></a>. It only has a few extra lines:</p>
+<p>We import fbs&#39;s <code>ApplicationContext</code>:</p>
+<pre><code>from fbs_runtime.application_context.PyQt6 import ApplicationContext
+</code></pre>
+<p>Further down, we instantiate it:</p>
+<pre><code>appctxt = ApplicationContext()
+</code></pre>
+<p>We no longer need to create a <code>QApplication</code>. This is done automatically by fbs.</p>
+<p>The editor&#39;s <em>About</em> dialog shows an icon:</p>
+<p><img src="../screenshots/qdialog-example.png" alt="QDialog example"></p>
+<p>This is done in the original code as follows:</p>
+<pre><code>text = &quot;...&lt;img src=icon.svg&gt;...&quot;
+</code></pre>
+<p>The new code however needs to be more flexible with regard to the icon&#39;s path. When running from source, the icon lies in <a href="src/main/resources/base/icon.svg"><code>src/main/resources/base/icon.svg</code></a>. When running on the user&#39;s system however, it lies in the installation directory.</p>
+<p>To handle this, the new code uses fbs&#39;s <a href="https://build-system.fman.io/manual/#get_resource"><code>ApplicationContext.get_resource(...)</code></a> method:</p>
+<pre><code>text = &quot;...&lt;img src=%r&gt;...&quot; % appctxt.get_resource(&quot;icon.svg&quot;)
+</code></pre>
+<p>This automatically handles the different possible locations of the image.</p>
+<p>Because we didn&#39;t create the <code>QApplication</code> ourselves, we finally use the following call instead of only <code>app.exec()</code>:</p>
+<pre><code>appctxt.app.exec()
+</code></pre>
+<p>To run this example yourself, you need fbs installed as per the instructions <a href="../../README.md#running-the-examples">here</a>. Then, you can do use the following command to run the text editor:</p>
+<pre><code>fbs run
+</code></pre>
+<p>The following command then compiles the Python source code into a standalone executable in your <code>target/</code> directory:</p>
+<pre><code>fbs freeze
+</code></pre>
+<p>Finally, the following creates an installer that you can distribute to other people:</p>
+<pre><code>fbs installer
+</code></pre>
+<p>Please note that this last command requires that you have <a href="https://nsis.sourceforge.io/Main_Page">NSIS</a> installed and on your <code>PATH</code> on Windows, or <a href="https://github.com/jordansissel/fpm"><code>fpm</code></a> on Linux.</p>
+<h2>code</h2>
+<pre><code class="language-python">from fbs_runtime.application_context.PyQt6 import ApplicationContext
+from PyQt6.QtWidgets import QMainWindow
+
+import sys
+
+appctxt = ApplicationContext()       # 1. Instantiate ApplicationContext
+
+from PyQt6.QtWidgets import *
+from PyQt6.QtGui import QKeySequence
+
+class MainWindow(QMainWindow):
+    def closeEvent(self, e):
+        if not text.document().isModified():
+            return
+        answer = QMessageBox.question(
+            window, None,
+            &quot;You have unsaved changes. Save before closing?&quot;,
+            QMessageBox.Save | QMessageBox.Discard | QMessageBox.Cancel
+        )
+        if answer &amp; QMessageBox.Save:
+            save()
+        elif answer &amp; QMessageBox.Cancel:
+            e.ignore()
+
+text = QPlainTextEdit()
+window = MainWindow()
+window.setCentralWidget(text)
+
+file_path = None
+
+menu = window.menuBar().addMenu(&quot;&amp;File&quot;)
+open_action = QAction(&quot;&amp;Open&quot;)
+def open_file():
+    global file_path
+    path = QFileDialog.getOpenFileName(window, &quot;Open&quot;)[0]
+    if path:
+        text.setPlainText(open(path).read())
+        file_path = path
+open_action.triggered.connect(open_file)
+open_action.setShortcut(QKeySequence.Open)
+menu.addAction(open_action)
+
+save_action = QAction(&quot;&amp;Save&quot;)
+def save():
+    if file_path is None:
+        save_as()
+    else:
+        with open(file_path, &quot;w&quot;) as f:
+            f.write(text.toPlainText())
+        text.document().setModified(False)
+save_action.triggered.connect(save)
+save_action.setShortcut(QKeySequence.Save)
+menu.addAction(save_action)
+
+save_as_action = QAction(&quot;Save &amp;As...&quot;)
+def save_as():
+    global file_path
+    path = QFileDialog.getSaveFileName(window, &quot;Save As&quot;)[0]
+    if path:
+        file_path = path
+        save()
+save_as_action.triggered.connect(save_as)
+menu.addAction(save_as_action)
+
+close = QAction(&quot;&amp;Close&quot;)
+close.triggered.connect(window.close)
+menu.addAction(close)
+
+help_menu = window.menuBar().addMenu(&quot;&amp;Help&quot;)
+about_action = QAction(&quot;&amp;About&quot;)
+help_menu.addAction(about_action)
+def show_about_dialog():
+    text = &quot;&lt;center&gt;&quot; \
+       &quot;&lt;h1&gt;Text Editor&lt;/h1&gt;&quot; \
+       &quot;&amp;#8291;&quot; \
+       &quot;&lt;img src=\&quot;%s\&quot;&gt;&quot; \
+       &quot;&lt;/center&gt;&quot; \
+       &quot;&lt;p&gt;Version 31.4.159.265358&lt;br/&gt;&quot; \
+       &quot;Copyright &amp;copy; Company Inc.&lt;/p&gt;&quot; \
+       % appctxt.get_resource(&quot;icon.svg&quot;)
+    about_dialog = QMessageBox(window)
+    about_dialog.setText(text)
+    about_dialog.exec()
+about_action.triggered.connect(show_about_dialog)
+
+window.show()
+
+exit_code = appctxt.app.exec()      # 2. Invoke appctxt.app.exec()
+sys.exit(exit_code)
+</code></pre>
+<h2>MY NOTE</h2>
+<h1>PyQt6 文本编辑器与 fbs 构建系统学习笔记</h1>
+<h2>一、概述</h2>
+<p>本示例旨在展示如何结合使用 PyQt6 和 fbs 构建系统来创建一个功能完备的文本编辑器。其中，fbs 发挥着重要作用，它能够将 Python 代码编译为独立可执行文件，并生成对应的安装程序，极大地方便了用户的安装与使用。</p>
+<h2>二、代码整体结构及功能分析</h2>
+<h3>（一）导入必要库</h3>
+<pre><code class="language-python">from fbs_runtime.application_context.PyQt6 import ApplicationContext
+from PyQt6.QtWidgets import QMainWindow
+import sys
+</code></pre>
+<p>通过上述导入操作，引入了创建应用程序上下文、构建主窗口以及控制程序运行与退出所需的模块。</p>
+<h3>（二）创建应用程序上下文</h3>
+<pre><code class="language-python">appctxt = ApplicationContext()
+</code></pre>
+<p>利用 <code>fbs</code> 的 <code>ApplicationContext</code> 类来实例化应用程序上下文，以此管理整个应用程序的生命周期以及相关资源。</p>
+<h3>（三）定义主窗口类及关闭事件处理</h3>
+<pre><code class="language-python">class MainWindow(QMainWindow):
+    def closeEvent(self, e):
+        if not text.document().isModified():
+            return
+        answer = QMessageBox.question(
+            window, None,
+            &quot;You have unsaved changes. Save before closing?&quot;,
+            QMessageBox.Save | QMessageBox.Discard | QMessageBox.Cancel
+        )
+        if answer &amp; QMessageBox.Save:
+            save()
+        elif answer &amp; QMessageBox.Cancel:
+            e.ignore()
+</code></pre>
+<ul>
+<li><strong>主窗口类定义</strong>：继承自 <code>QMainWindow</code>，作为文本编辑器的主窗口框架。</li>
+<li><strong>关闭事件处理逻辑</strong>：在主窗口尝试关闭时，会检查文本内容是否有未保存的修改。若有修改，则弹出提示框，让用户选择保存、放弃保存或取消关闭操作。根据用户选择执行相应的逻辑，如选择保存则调用 <code>save()</code> 函数，选择取消则忽略此次关闭事件。</li>
+</ul>
+<h3>（四）初始化文本编辑器和主窗口</h3>
+<pre><code class="language-python">text = QPlainTextEdit()
+window = MainWindow()
+window.setCentralWidget(text)
+</code></pre>
+<p>创建 <code>QPlainTextEdit</code> 实例作为文本编辑区域，并将其设置为主窗口的中心部件，从而构建起文本编辑器的基本界面布局。</p>
+<h3>（五）文件操作相关函数定义</h3>
+<ol>
+<li><strong>打开文件函数 <code>open_file()</code></strong></li>
+</ol>
+<pre><code class="language-python">file_path = None
+
+def open_file():
+    global file_path
+    path = QFileDialog.getOpenFileName(window, &quot;Open&quot;)[0]
+    if path:
+        text.setPlainText(open(path).read())
+        file_path = path
+</code></pre>
+<p>通过 <code>QFileDialog</code> 获取用户选择的文件路径，若路径有效，则读取文件内容并显示在文本编辑器中，同时记录当前文件路径。</p>
+<ol start="2">
+<li><strong>保存文件函数 <code>save()</code></strong></li>
+</ol>
+<pre><code class="language-python">def save():
+    if file_path is None:
+        save_as()
+    else:
+        with open(file_path, &quot;w&quot;) as f:
+            f.write(text.toPlainText())
+        text.document().setModified(False)
+</code></pre>
+<p>先判断当前是否已有文件路径，若没有则调用 <code>save_as()</code> 函数进行另存为操作；若有路径，则将文本编辑器中的内容写入对应文件，并将文档的修改状态标记为已保存。</p>
+<ol start="3">
+<li><strong>另存为文件函数 <code>save_as()</code></strong></li>
+</ol>
+<pre><code class="language-python">def save_as():
+    global file_path
+    path = QFileDialog.getSaveFileName(window, &quot;Save As&quot;)[0]
+    if path:
+        file_path = path
+        save()
+</code></pre>
+<p>获取用户指定的另存为文件路径，若路径有效，则更新当前文件路径并调用 <code>save()</code> 函数执行保存操作。</p>
+<h3>（六）菜单和动作创建及绑定</h3>
+<pre><code class="language-python">menu = window.menuBar().addMenu(&quot;&amp;File&quot;)
+
+open_action = QAction(&quot;&amp;Open&quot;)
+open_action.triggered.connect(open_file)
+open_action.setShortcut(QKeySequence.Open)
+menu.addAction(open_action)
+
+save_action = QAction(&quot;&amp;Save&quot;)
+save_action.triggered.connect(save)
+save_action.setShortcut(QKeySequence.Save)
+menu.addAction(save_action)
+
+save_as_action = QAction(&quot;Save &amp;As...&quot;)
+save_as_action.triggered.connect(save_as)
+menu.addAction(save_as_action)
+
+close = QAction(&quot;&amp;Close&quot;)
+close.triggered.connect(window.close)
+menu.addAction(close)
+</code></pre>
+<ul>
+<li>在主窗口的菜单栏中创建 “File” 菜单，并为其添加 “Open”、“Save”、“Save As...” 和 “Close” 等动作。</li>
+<li>将每个动作与对应的函数进行绑定，同时设置相应的快捷键，实现通过菜单操作或快捷键来执行文件打开、保存、另存为以及关闭窗口等功能。</li>
+</ul>
+<h3>（七）帮助菜单和关于对话框相关操作</h3>
+<pre><code class="language-python">help_menu = window.menuBar().addMenu(&quot;&amp;Help&quot;)
+
+about_action = QAction(&quot;&amp;About&quot;)
+help_menu.addAction(about_action)
+
+def show_about_dialog():
+    text = &quot;&lt;center&gt;&quot; \
+           &quot;&lt;h1&gt;Text Editor&lt;/h1&gt;&quot; \
+           &quot;&amp;#8291;&quot; \
+           &quot;&lt;img src=\&quot;%s\&quot;&gt;&quot; \
+           &quot;&lt;/center&gt;&quot; \
+           &quot;&lt;p&gt;Version 31.4.159.265358&lt;br/&gt;&quot; \
+           &quot;Copyright &amp;copy; Company Inc.&lt;/p&gt;&quot; \
+           % appctxt.get_resource(&quot;icon.svg&quot;)
+    about_dialog = QMessageBox(window)
+    about_dialog.setText(text)
+    about_dialog.exec()
+
+about_action.triggered.connect(show_about_dialog)
+</code></pre>
+<ul>
+<li>创建 “Help” 菜单，并在其中添加 “About” 动作。</li>
+<li>定义 <code>show_about_dialog()</code> 函数，用于构建并显示关于对话框，展示文本编辑器的版本、版权等信息，同时尝试加载对应的图标资源（通过 <code>fbs</code> 的资源获取机制）。将 “About” 动作与该函数绑定，实现点击 “About” 菜单项弹出关于对话框的功能。</li>
+</ul>
+<h3>（八）显示主窗口并运行应用程序</h3>
+<pre><code class="language-python">window.show()
+exit_code = appctxt.app.exec()
+sys.exit(exit_code)
+</code></pre>
+<p>先显示主窗口，然后通过应用程序上下文启动应用程序的事件循环，使程序保持运行状态，等待用户操作。最后根据程序退出时的状态码退出整个程序。</p>
+<h2>三、关键知识点总结</h2>
+<h3>（一）fbs 应用程序上下文</h3>
+<ul>
+<li><strong>代码示例</strong>：</li>
+</ul>
+<pre><code class="language-python">from fbs_runtime.application_context.PyQt6 import ApplicationContext
+appctxt = ApplicationContext()
+</code></pre>
+<ul>
+<li><strong>作用</strong>：<code>ApplicationContext</code> 类是 <code>fbs</code> 框架中的重要组成部分，它负责管理应用程序从启动到关闭的整个生命周期，同时也便于对应用程序资源（如图片、配置文件等）进行有效的组织和访问，确保在不同环境下（开发、打包、安装后运行等）都能正确使用这些资源。</li>
+</ul>
+<h3>（二）窗口关闭事件处理</h3>
+<ul>
+<li><strong>代码示例</strong>：</li>
+</ul>
+<pre><code class="language-python">def closeEvent(self, e):
+    if not text.document().isModified():
+        return
+    answer = QMessageBox.question(
+        window, None,
+        &quot;You have unsaved changes. Save before closing?&quot;,
+        QMessageBox.Save | QMessageBox.Discard | QMessageBox.Cancel
+    )
+    if answer &amp; QMessageBox.Save:
+        save()
+    elif answer &amp; QMessageBox.Cancel:
+        e.ignore()
+</code></pre>
+<ul>
+<li><strong>处理逻辑</strong>：重写主窗口类的 <code>closeEvent</code> 方法，在窗口关闭前检查文本内容是否被修改。若有修改，利用 <code>QMessageBox</code> 弹出包含保存、放弃保存、取消三个选项的提示框，根据用户选择执行相应操作，以此避免用户因误操作而丢失未保存的数据。</li>
+</ul>
+<h3>（三）文件操作功能实现</h3>
+<ol>
+<li><strong>打开文件</strong>：<ul>
+<li><strong>代码示例</strong>：</li>
+</ul>
+<pre><code class="language-python">def open_file():
+    global file_path
+    path = QFileDialog.getOpenFileName(window, &quot;Open&quot;)[0]
+    if path:
+        text.setPlainText(open(path).read())
+        file_path = path
+</code></pre>
+<ul>
+<li><strong>流程</strong>：借助 <code>QFileDialog</code> 提供的文件选择对话框获取用户指定的文件路径，读取该文件内容并显示在文本编辑器中，同时更新记录当前打开文件路径的变量。</li>
+</ul>
+</li>
+<li><strong>保存文件</strong>：<ul>
+<li><strong>代码示例</strong>：</li>
+</ul>
+<pre><code class="language-python">def save():
+    if file_path is None:
+        save_as()
+    else:
+        with open(file_path, &quot;w&quot;) as f:
+            f.write(text.toPlainText())
+        text.document().setModified(False)
+</code></pre>
+<ul>
+<li><strong>流程</strong>：先判断是否已有明确的文件路径，若无则调用另存为操作；若有，则将文本编辑器中的文本内容写入对应文件，并将文档的修改状态标记为已保存，告知系统当前内容已保存，避免下次关闭时重复提示保存。</li>
+</ul>
+</li>
+<li><strong>另存为文件</strong>：<ul>
+<li><strong>代码示例</strong>：</li>
+</ul>
+<pre><code class="language-python">def save_as():
+    global file_path
+    path = QFileDialog.getSaveFileName(window, &quot;Save As&quot;)[0]
+    if path:
+        file_path = path
+        save()
+</code></pre>
+<ul>
+<li><strong>流程</strong>：同样通过 <code>QFileDialog</code> 获取用户指定的新文件路径，若路径有效则更新文件路径记录，并调用保存文件函数来完成实际的文件写入操作。</li>
+</ul>
+</li>
+</ol>
+<h3>（四）菜单和动作关联</h3>
+<ul>
+<li><strong>代码示例（以 “Open” 动作为例）</strong>：</li>
+</ul>
+<pre><code class="language-python">open_action = QAction(&quot;&amp;Open&quot;)
+open_action.triggered.connect(open_file)
+open_action.setShortcut(QKeySequence.Open)
+menu.addAction(open_action)
+</code></pre>
+<ul>
+<li><strong>实现方式</strong>：针对每个功能（如打开、保存等）创建对应的 <code>QAction</code> 实例，将其与具体实现功能的函数通过 <code>triggered.connect()</code> 方法进行绑定，同时设置合适的快捷键，最后将这些动作添加到对应的菜单中，使得用户可以方便地通过菜单栏操作或者快捷键来调用相应功能。</li>
+</ul>
+<h3>（五）帮助菜单与关于对话框展示</h3>
+<ul>
+<li><strong>代码示例</strong>：</li>
+</ul>
+<pre><code class="language-python">help_menu = window.menuBar().addMenu(&quot;&amp;Help&quot;)
+
+about_action = QAction(&quot;&amp;About&quot;)
+help_menu.addAction(about_action)
+
+def show_about_dialog():
+    text = &quot;&lt;center&gt;&quot; \
+           &quot;&lt;h1&gt;Text Editor&lt;/h1&gt;&quot; \
+           &quot;&amp;#8291;&quot; \
+           &quot;&lt;img src=\&quot;%s\&quot;&gt;&quot; \
+           &quot;&lt;/center&gt;&quot; \
+           &quot;&lt;p&gt;Version 31.4.159.265358&lt;br/&gt;&quot; \
+           &quot;Copyright &amp;copy; Company Inc.&lt;/p&gt;&quot; \
+           % appctxt.get_resource(&quot;icon.svg&quot;)
+    about_dialog = QMessageBox(window)
+    about_dialog.setText(text)
+    about_dialog.exec()
+
+about_action.triggered.connect(show_about_dialog)
+</code></pre>
+<ul>
+<li><strong>实现逻辑</strong>：在菜单栏创建 “Help” 菜单，并添加 “About” 动作。点击 “About” 动作时，会执行 <code>show_about_dialog()</code> 函数，该函数构建一个包含文本编辑器基本信息（版本、版权等）以及尝试加载图标资源的 <code>QMessageBox</code> 对话框，并显示出来，为用户提供应用程序相关的基本介绍。</li>
+</ul>
+<h2>四、运行示例相关命令</h2>
+<ol>
+<li><strong>安装 fbs</strong>：
+使用 <code>pip install fbs</code> 命令安装 <code>fbs</code> 构建系统，确保具备编译和打包应用程序的基础环境。</li>
+<li><strong>运行文本编辑器</strong>：
+执行 <code>fbs run</code> 命令可以直接运行文本编辑器程序，方便在开发过程中进行调试和查看功能效果。</li>
+<li><strong>编译成独立可执行文件</strong>：
+通过 <code>fbs freeze</code> 命令，<code>fbs</code> 会将 Python 代码及相关依赖打包编译为独立的可执行文件，使其可以在没有 Python 环境的情况下运行（具体依赖于目标平台和相关配置）。</li>
+<li><strong>生成安装程序</strong>：
+使用 <code>fbs installer</code> 命令，<code>fbs</code> 会基于前面编译生成的文件进一步生成安装程序（例如 Windows 下的 <code>.exe</code> 安装包、Linux 下的 <code>.deb</code> 或 <code>.rpm</code> 包等，具体取决于目标操作系统和配置），方便用户进行安装使用。</li>
+</ol>
+<p>通过对上述内容的学习，可以全面掌握如何利用 PyQt6 和 fbs 构建系统打造一个功能完整的文本编辑器，并将其转化为可方便分发和安装的应用程序形式。</p>
+
+<hr>
+<h1>LESSON9</h1>
+<h1>Qt Dark Theme</h1>
+<p>This example shows how Qt&#39;s style mechanisms can be used to set a dark theme. It adapts the text editor from <a href="../07%20Qt%20Text%20Editor">example 7</a>.</p>
+<p><img src="../screenshots/qt-dark-theme.png" alt="Qt Dark Theme"></p>
+<p>As you can see in <a href="main.py"><code>main.py</code></a>, this example uses <code>QApplication.setStyle(...)</code> and a <code>QPalette</code> to change the application&#39;s colors:</p>
+<pre><code># Force the style to be the same on all OSs:
+app.setStyle(&quot;Fusion&quot;)
+
+# Now use a palette to switch to dark colors:
+palette = QPalette()
+palette.setColor(QPalette.Window, QColor(53, 53, 53))
+palette.setColor(QPalette.WindowText, Qt.white)
+...
+app.setPalette(palette)
+</code></pre>
+<p>The rest of the code is the same as for the <a href="../07%20Qt%20Text%20Editor">original version of the text editor</a>.</p>
+<p>To run this example yourself, please follow the <a href="../../README.md#running-the-examples">instructions in the README of this repository</a>.</p>
+<h2>code</h2>
+<p>以下是添加注释后的代码：</p>
+<pre><code class="language-python">from PyQt6.QtWidgets import *
+from PyQt6.QtGui import QKeySequence, QPalette, QColor
+from PyQt6.QtCore import Qt
+import sys
+
+app = QApplication([])
+
+# 设置应用程序的样式为Fusion，这使得在不同操作系统上都能有一致的外观
+app.setStyle(&quot;Fusion&quot;)
+
+# 创建一个调色板对象，用于设置应用程序的颜色
+palette = QPalette()
+# 设置窗口背景颜色为深灰色（RGB值为53, 53, 53）
+palette.setColor(QPalette.Window, QColor(53, 53, 53))
+# 设置窗口文本颜色为白色
+palette.setColor(QPalette.WindowText, Qt.white)
+# 设置基础背景颜色为更深的灰色（RGB值为25, 25, 25）
+palette.setColor(QPalette.Base, QColor(25, 25, 25))
+# 设置交替的基础背景颜色（例如在某些列表或表格视图中）为深灰色
+palette.setColor(QPalette.AlternateBase, QColor(53, 53, 53))
+# 设置工具提示的背景颜色为白色
+palette.setColor(QPalette.ToolTipBase, Qt.white)
+# 设置工具提示的文本颜色为白色
+palette.setColor(QPalette.ToolTipText, Qt.white)
+# 设置普通文本颜色为白色
+palette.setColor(QPalette.Text, Qt.white)
+# 设置按钮背景颜色为深灰色
+palette.setColor(QPalette.Button, QColor(53, 53, 53))
+# 设置按钮文本颜色为白色
+palette.setColor(QPalette.ButtonText, Qt.white)
+# 设置高亮文本颜色为红色（例如错误提示等）
+palette.setColor(QPalette.BrightText, Qt.red)
+# 设置链接颜色为特定的蓝色（RGB值为42, 130, 218）
+palette.setColor(QPalette.Link, QColor(42, 130, 218))
+# 设置高亮颜色为蓝色（例如选中项等）
+palette.setColor(QPalette.Highlight, QColor(42, 130, 218))
+# 设置高亮文本颜色为黑色（当有项被高亮时，文本颜色）
+palette.setColor(QPalette.HighlightedText, Qt.black)
+# 将设置好的调色板应用到应用程序
+app.setPalette(palette)
+
+# 设置应用程序的名称为Text Editor
+app.setApplicationName(&quot;Text Editor&quot;)
+
+text = QPlainTextEdit()
+
+
+class MainWindow(QMainWindow):
+    def closeEvent(self, e):
+        # 检查文本是否有未保存的修改
+        if not text.document().isModified():
+            return
+        # 弹出消息框询问用户如何处理未保存的修改
+        answer = QMessageBox.question(
+            window, None,
+            &quot;You have unsaved changes. Save before closing?&quot;,
+            QMessageBox.Save | QMessageBox.Discard | QMessageBox.Cancel
+        )
+        if answer &amp; QMessageBox.Save:
+            save()
+        elif answer &amp; QMessageBox.Cancel:
+            e.ignore()
+
+
+window = MainWindow()
+window.setCentralWidget(text)
+
+file_path = None
+
+# 创建文件菜单
+menu = window.menuBar().addMenu(&quot;&amp;File&quot;)
+open_action = QAction(&quot;&amp;Open&quot;)
+
+
+def open_file():
+    global file_path
+    # 弹出文件打开对话框，获取用户选择的文件路径
+    path = QFileDialog.getOpenFileName(window, &quot;Open&quot;)[0]
+    if path:
+        # 将选择的文件内容读取到文本编辑框中
+        text.setPlainText(open(path).read())
+        file_path = path
+
+
+# 将打开文件操作与打开文件函数绑定，并设置快捷键
+open_action.triggered.connect(open_file)
+open_action.setShortcut(QKeySequence.Open)
+menu.addAction(open_action)
+
+save_action = QAction(&quot;&amp;Save&quot;)
+
+
+def save():
+    global file_path
+    if file_path is None:
+        save_as()
+    else:
+        with open(file_path, &quot;w&quot;) as f:
+            f.write(text.toPlainText())
+        text.document().setModified(False)
+
+
+# 将保存文件操作与保存文件函数绑定，并设置快捷键
+save_action.triggered.connect(save)
+save_action.setShortcut(QKeySequence.Save)
+menu.addAction(save_action)
+
+save_as_action = QAction(&quot;Save &amp;As...&quot;)
+
+
+def save_as():
+    global file_path
+    # 弹出文件另存为对话框，获取用户选择的文件路径
+    path = QFileDialog.getSaveFileName(window, &quot;Save As&quot;)[0]
+    if path:
+        file_path = path
+        save()
+
+
+# 将另存为文件操作与另存为文件函数绑定
+save_as_action.triggered.connect(save_as)
+menu.addAction(save_as_action)
+
+close = QAction(&quot;&amp;Close&quot;)
+# 将关闭窗口操作与主窗口的关闭方法绑定
+close.triggered.connect(window.close)
+menu.addAction(close)
+
+# 创建帮助菜单
+help_menu = window.menuBar().addMenu(&quot;&amp;Help&quot;)
+about_action = QAction(&quot;&amp;About&quot;)
+help_menu.addAction(about_action)
+
+
+def show_about_dialog():
+    text = &quot;&lt;center&gt;&quot; \
+           &quot;&lt;h1&gt;Text Editor&lt;/h1&gt;&quot; \
+           &quot;&amp;#8291;&quot; \
+           &quot;&lt;img src=icon.svg&gt;&quot; \
+           &quot;&lt;/center&gt;&quot; \
+           &quot;&lt;p&gt;Version 31.4.159.265358&lt;br/&gt;&quot; \
+           &quot;Copyright &amp;copy; Company Inc.&lt;/p&gt;&quot;
+    # 弹出关于对话框，显示文本编辑器的相关信息
+    QMessageBox.about(window, &quot;About Text Editor&quot;, text)
+
+
+# 将显示关于对话框操作与显示关于对话框函数绑定
+about_action.triggered.connect(show_about_dialog)
+
+window.show()
+# 启动应用程序的事件循环
+app.exec()
+</code></pre>
+<h2>学习笔记</h2>
+<h3>一、整体概述</h3>
+<p>这段代码使用<code>PyQt6</code>库创建了一个简单的文本编辑器应用程序。它具有基本的文件操作功能（打开、保存、另存为和关闭）以及一个帮助菜单中的关于对话框，并且通过自定义调色板实现了深色主题的界面风格。</p>
+<h3>二、关键知识点</h3>
+<h4>1. 应用程序外观风格和调色板</h4>
+<ul>
+<li><strong>设置样式</strong>：<code>app.setStyle(&quot;Fusion&quot;)</code>语句将应用程序的样式设置为<code>Fusion</code>，这使得应用程序在不同操作系统上有统一的外观风格。</li>
+<li><strong>调色板操作</strong><ul>
+<li>创建<code>QPalette</code>对象后，通过<code>setColor</code>方法设置不同角色（如<code>Window</code>、<code>WindowText</code>等）的颜色。这些角色对应着应用程序界面的不同部分，例如窗口背景、文本、按钮等。</li>
+<li>将设置好颜色的调色板应用到应用程序（<code>app.setPalette(palette)</code>），从而实现了深色主题的界面。</li>
+</ul>
+</li>
+</ul>
+<h4>2. 主窗口和事件处理</h4>
+<ul>
+<li><strong>主窗口类定义</strong>：定义了<code>MainWindow</code>类继承自<code>QMainWindow</code>，这是应用程序的主窗口。</li>
+<li><strong>关闭事件处理</strong>：在<code>MainWindow</code>类的<code>closeEvent</code>方法中，检查文本是否有未保存的修改。如果有，弹出消息框让用户选择保存、丢弃或取消关闭操作。根据用户的选择执行相应的逻辑，如保存文件或取消关闭窗口。</li>
+</ul>
+<h4>3. 文件操作功能</h4>
+<ul>
+<li><strong>打开文件</strong><ul>
+<li>创建<code>QAction</code>对象<code>open_action</code>表示打开文件操作，并设置快捷键为<code>QKeySequence.Open</code>。</li>
+<li>定义<code>open_file</code>函数，通过<code>QFileDialog.getOpenFileName</code>弹出文件打开对话框获取文件路径，读取文件内容并显示在文本编辑框中，同时记录文件路径。</li>
+<li>将<code>open_action</code>的触发事件与<code>open_file</code>函数绑定。</li>
+</ul>
+</li>
+<li><strong>保存文件</strong><ul>
+<li>定义<code>save</code>函数，首先检查是否有文件路径。如果没有，则调用<code>save_as</code>函数进行另存为操作；如果有，则将文本编辑框中的内容写入文件，并将文本的修改状态设置为<code>False</code>（已保存）。</li>
+<li>创建<code>QAction</code>对象<code>save_action</code>表示保存文件操作，并设置快捷键为<code>QKeySequence.Save</code>，将其触发事件与<code>save</code>函数绑定。</li>
+</ul>
+</li>
+<li><strong>另存为文件</strong><ul>
+<li>定义<code>save_as</code>函数，通过<code>QFileDialog.getSaveFileName</code>弹出文件另存为对话框获取文件路径，更新文件路径记录并调用<code>save</code>函数进行保存。</li>
+<li>创建<code>QAction</code>对象<code>save_as_action</code>表示另存为操作，并将其触发事件与<code>save_as</code>函数绑定。</li>
+</ul>
+</li>
+<li><strong>关闭窗口操作</strong>：创建<code>QAction</code>对象<code>close</code>表示关闭窗口操作，并将其触发事件与主窗口的<code>close</code>方法绑定。</li>
+</ul>
+<h4>4. 帮助菜单和关于对话框</h4>
+<ul>
+<li><strong>帮助菜单创建</strong>：在主窗口的菜单栏中创建<code>&amp;Help</code>菜单。</li>
+<li><strong>关于对话框</strong><ul>
+<li>创建<code>QAction</code>对象<code>about_action</code>表示关于操作，添加到帮助菜单中。</li>
+<li>定义<code>show_about_dialog</code>函数，构建一个包含文本编辑器版本和版权信息的字符串，并使用<code>QMessageBox.about</code>弹出关于对话框。</li>
+<li>将<code>about_action</code>的触发事件与<code>show_about_dialog</code>函数绑定。</li>
+</ul>
+</li>
+</ul>
+<h3>三、运行和扩展</h3>
+<ul>
+<li><strong>运行方式</strong>：在确保<code>PyQt6</code>库已安装的情况下，直接运行此脚本即可启动文本编辑器应用程序。</li>
+<li><strong>扩展方向</strong><ul>
+<li>可以添加更多的文件操作功能，如新建文件等。</li>
+<li>进一步完善文本编辑功能，例如添加文本格式设置（字体、字号、颜色等）。</li>
+<li>优化界面布局，添加工具栏等其他界面元素。</li>
+</ul>
+</li>
+</ul>
+<hr>
+<h1>lesson10</h1>
+<h1>QPainter Python example</h1>
+<p>This example application demonstrates how you can use <a href="https://doc.qt.io/qt-5/qpainter.html"><code>QPainter</code></a> to perform custom rendering in a widget. It turns the text editor from <a href="../07%20Qt%20Text%20Editor">example 7</a> into an action shooter: When you click inside the editor with the mouse, bullet holes appear.</p>
+<p align="center"><img src="../screenshots/qpainter-python-example.png" alt="QPainter Python Example"></p>
+
+<p>The crucial steps of this example are to <a href="main.py#L13-L17">override <code>mousePressEvent(...)</code></a> to handle the user&#39;s clicks, and <a href="main.py#L18-L22"><code>paintEvent(...)</code></a> to draw the bullets. See the top of <a href="main.py"><code>main.py</code></a> for how these features work in detail.</p>
+<p>To run this example yourself, please follow <a href="../../README.md#running-the-examples">these instructions</a>.</p>
+<pre><code class="language-python">from PyQt6.QtWidgets import *
+from PyQt6.QtGui import *
+from PyQt6.QtCore import *
+from PyQt6.QtMultimedia import *
+
+class PlainTextEdit(QPlainTextEdit):
+    def __init__(self):
+        super().__init__()
+        self._holes = []
+        self._bullet = QPixmap(&quot;bullet.png&quot;)
+        size = self._bullet.size()
+        self._offset = QPoint(size.width() / 2, size.height() / 2)
+    def mousePressEvent(self, e):
+        self._holes.append(e.pos())
+        super().mousePressEvent(e)
+        self.viewport().update()
+        *.play(&quot;shot.wav&quot;)
+    def paintEvent(self, e):
+        super().paintEvent(e)
+        painter = QPainter(self.viewport())
+        for hole in self._holes:
+            painter.drawPixmap(hole - self._offset, self._bullet)
+
+app = QApplication([])
+text = PlainTextEdit()
+text.setPlainText(&quot;Click with the mouse below to shoot ;-)&quot;)
+
+# The rest of the code is as for the normal version of the text editor.
+
+class MainWindow(QMainWindow):
+    def closeEvent(self, e):
+        if not text.document().isModified():
+            return
+        answer = QMessageBox.question(
+            window, None,
+            &quot;You have unsaved changes. Save before closing?&quot;,
+            QMessageBox.Save | QMessageBox.Discard | QMessageBox.Cancel
+        )
+        if answer &amp; QMessageBox.Save:
+            save()
+        elif answer &amp; QMessageBox.Cancel:
+            e.ignore()
+
+app.setApplicationName(&quot;Text Editor&quot;)
+window = MainWindow()
+window.setCentralWidget(text)
+
+file_path = None
+
+menu = window.menuBar().addMenu(&quot;&amp;File&quot;)
+open_action = QAction(&quot;&amp;Open&quot;)
+def open_file():
+    global file_path
+    path = QFileDialog.getOpenFileName(window, &quot;Open&quot;)[0]
+    if path:
+        text.setPlainText(open(path).read())
+        file_path = path
+open_action.triggered.connect(open_file)
+open_action.setShortcut(QKeySequence.Open)
+menu.addAction(open_action)
+
+save_action = QAction(&quot;&amp;Save&quot;)
+def save():
+    if file_path is None:
+        save_as()
+    else:
+        with open(file_path, &quot;w&quot;) as f:
+            f.write(text.toPlainText())
+        text.document().setModified(False)
+save_action.triggered.connect(save)
+save_action.setShortcut(QKeySequence.Save)
+menu.addAction(save_action)
+
+save_as_action = QAction(&quot;Save &amp;As...&quot;)
+def save_as():
+    global file_path
+    path = QFileDialog.getSaveFileName(window, &quot;Save As&quot;)[0]
+    if path:
+        file_path = path
+        save()
+save_as_action.triggered.connect(save_as)
+menu.addAction(save_as_action)
+
+close = QAction(&quot;&amp;Close&quot;)
+close.triggered.connect(window.close)
+menu.addAction(close)
+
+help_menu = window.menuBar().addMenu(&quot;&amp;Help&quot;)
+about_action = QAction(&quot;&amp;About&quot;)
+help_menu.addAction(about_action)
+def show_about_dialog():
+    text = &quot;&lt;center&gt;&quot; \
+           &quot;&lt;h1&gt;Text Editor&lt;/h1&gt;&quot; \
+           &quot;&amp;#8291;&quot; \
+           &quot;&lt;img src=icon.svg&gt;&quot; \
+           &quot;&lt;/center&gt;&quot; \
+           &quot;&lt;p&gt;Version 31.4.159.265358&lt;br/&gt;&quot; \
+           &quot;Copyright &amp;copy; Company Inc.&lt;/p&gt;&quot;
+    QMessageBox.about(window, &quot;About Text Editor&quot;, text)
+about_action.triggered.connect(show_about_dialog)
+
+window.show()
+app.exec()
+</code></pre>
+<h2>MY NOTE</h2>
+<h1>《关于“QPainter Python example”的学习笔记》</h1>
+<h2>一、示例概述</h2>
+<p>本示例展示了如何使用<code>PyQt6</code>库中的<code>QPainter</code>进行自定义绘图，将一个普通的文本编辑器（类似于之前示例 7 的文本编辑器）转变为一个具有射击效果的应用程序。当用户在文本编辑器区域内点击鼠标时，会出现子弹孔的图案，同时播放射击音效，为文本编辑器增添了独特的交互效果。</p>
+<h2>二、关键代码解析</h2>
+<h3>（一）自定义<code>PlainTextEdit</code>类</h3>
+<ul>
+<li><strong>初始化方法 <code>__init__</code></strong>：<ul>
+<li>调用父类的<code>__init__</code>方法来初始化<code>QPlainTextEdit</code>的基本属性。</li>
+<li>创建了一个空列表<code>_holes</code>，用于存储鼠标点击的位置（即子弹孔的位置）。</li>
+<li>加载了子弹的图片<code>bullet.png</code>，并获取其大小，计算出一个偏移量<code>_offset</code>，用于在绘制子弹孔时确保图片的中心与点击位置对齐。</li>
+</ul>
+</li>
+<li><strong>鼠标点击事件处理方法 <code>mousePressEvent</code></strong>：<ul>
+<li>当鼠标在文本编辑区域被点击时，将点击位置添加到<code>_holes</code>列表中。</li>
+<li>调用父类的<code>mousePressEvent</code>方法，以确保文本编辑区域的默认鼠标点击行为（如文本选择等）仍然生效。</li>
+<li>更新视图区域（<code>viewport</code>），这将触发<code>paintEvent</code>方法的调用，从而绘制出子弹孔。</li>
+<li>此处代码似乎有缺失，应该是有一个<code>QSoundEffect</code>或类似的音频播放对象，通过<code>.play(&quot;shot.wav&quot;)</code>来播放射击音效，但代码中未完整定义该对象。</li>
+</ul>
+</li>
+<li><strong>绘图事件处理方法 <code>paintEvent</code></strong>：<ul>
+<li>首先调用父类的<code>paintEvent</code>方法，确保文本编辑器的正常绘制（如文本显示等）。</li>
+<li>创建一个<code>QPainter</code>对象，用于在文本编辑区域的视图上进行绘制操作。</li>
+<li>遍历<code>_holes</code>列表中的每个位置，通过<code>drawPixmap</code>方法将子弹图片绘制在相应位置上，绘制时根据之前计算的<code>_offset</code>进行位置调整，使得子弹孔图片以正确的位置显示。</li>
+</ul>
+</li>
+</ul>
+<h3>（二）应用程序主体部分</h3>
+<ul>
+<li><strong>创建应用程序和主窗口</strong>：<ul>
+<li>创建<code>QApplication</code>对象<code>app</code>，并初始化一个<code>PlainTextEdit</code>对象<code>text</code>，同时设置了一段初始文本。</li>
+<li>定义<code>MainWindow</code>类，其中的<code>closeEvent</code>方法用于处理窗口关闭事件，当文本有未保存的修改时，弹出提示框让用户选择保存、丢弃或取消关闭操作，与之前的文本编辑器示例中的关闭事件处理逻辑类似。</li>
+</ul>
+</li>
+<li><strong>菜单和操作创建</strong>：<ul>
+<li>创建了文件菜单（<code>&amp;File</code>），包含打开（<code>&amp;Open</code>）、保存（<code>&amp;Save</code>）、另存为（<code>Save &amp;As...</code>）和关闭（<code>&amp;Close</code>）等操作，分别绑定了相应的函数（<code>open_file</code>、<code>save</code>、<code>save_as</code>、<code>window.close</code>），并设置了快捷键，这些操作的实现方式与普通文本编辑器的文件操作功能一致。</li>
+<li>创建帮助菜单（<code>&amp;Help</code>），其中的关于（<code>&amp;About</code>）操作，点击后会弹出一个包含文本编辑器版本和版权信息的对话框，通过<code>QMessageBox.about</code>实现。</li>
+</ul>
+</li>
+</ul>
+<h2>三、重要知识点总结</h2>
+<h3>（一）<code>QPainter</code>绘图机制</h3>
+<ul>
+<li>通过重写<code>paintEvent</code>方法，在该方法中创建<code>QPainter</code>对象，可以在<code>PyQt</code>的部件（如<code>QWidget</code>及其子类）上进行自定义绘图操作。</li>
+<li>使用<code>QPainter</code>的<code>drawPixmap</code>等方法可以绘制图片等图形元素，并且可以根据需要进行位置和尺寸的调整，通过指定绘制的坐标点来确定图形在部件上的位置。</li>
+</ul>
+<h3>（二）事件处理机制的扩展</h3>
+<ul>
+<li>对于<code>QWidget</code>的子类（如<code>PlainTextEdit</code>），可以重写<code>mousePressEvent</code>等鼠标事件处理方法，来捕捉和响应特定的用户操作（如鼠标点击）。</li>
+<li>在事件处理方法中，可以添加自定义的逻辑（如记录点击位置），同时结合其他操作（如更新视图、播放音效）来实现丰富的交互效果，并且要注意调用父类的相应事件处理方法，以确保部件的默认行为不受影响。</li>
+</ul>
+<h3>（三）音频播放（虽然代码有缺失，但体现的知识点）</h3>
+<ul>
+<li>可以使用<code>PyQt6</code>中的<code>QSoundEffect</code>或相关的音频播放类来在应用程序中播放音效，通过加载音频文件（如<code>&quot;shot.wav&quot;</code>）并调用<code>play</code>方法来实现，这为应用程序增添了听觉上的反馈，增强了用户体验。</li>
+</ul>
+<h2>四、运行与改进建议</h2>
+<h3>（一）运行方法</h3>
+<p>按照<code>README.md</code>中的说明（<code>../../README.md#running-the-examples</code>）来运行该示例，确保<code>PyQt6</code>库及其相关依赖（如图片文件<code>bullet.png</code>、音频文件<code>shot.wav</code>等）都已正确配置和放置。</p>
+<h3>（二）改进建议</h3>
+<ul>
+<li><strong>音频播放代码完善</strong>：补充完整音频播放对象的定义和初始化，确保音效能够正确播放，并且可以考虑添加更多的音频效果（如连续射击音效、弹孔出现的音效等），增强射击场景的真实感。</li>
+<li><strong>子弹孔效果优化</strong>：可以考虑为子弹孔添加一些动画效果（如逐渐消失的动画），或者根据射击的次数或位置生成不同的子弹孔样式，使交互效果更加丰富和有趣。</li>
+<li><strong>与文本编辑功能的结合</strong>：进一步探索如何将射击效果与文本编辑操作更好地结合起来，例如，当点击到特定的文本区域或文字时触发特殊的事件或效果，增加应用程序的独特性和实用性。</li>
+</ul>
+<hr>
+<h1>LESSON11</h1>
+<h1>PyQt Thread example</h1>
+<p>This example shows how you can use threads to make your PyQt application more responsive. It&#39;s a fully functional chat client.</p>
+<p align="center"><img src="../screenshots/pyqt-thread-example.png" alt="PyQt Thread Example"></p>
+
+<p>To run this example, please follow <a href="../../README.md#running-the-examples">the instructions in the README of this repository</a>. Instead of <code>python main.py</code>, use <code>python</code> to execute one of the scripts described below. Eg. <code>python 01_single_threaded.py</code>.</p>
+<p>To demonstrate the utility of threads, this directory contains multiple implementations of the chat client:</p>
+<ul>
+<li><a href="01_single_threaded.py"><code>01_single_threaded.py</code></a> does not use threads. Once per second, it fetches the latest messages from the server. It does this in the main thread. While fetching messages, it&#39;s unable to process your key strokes. As a result, it sometimes lags a little as you type.</li>
+<li><a href="02_multithreaded.py"><code>02_multithreaded.py</code></a> uses threads to fetch new messages in the background. It is considerably more responsive than the single threaded version.</li>
+<li><a href="03_with_threadutil.py"><code>03_with_threadutil.py</code></a> is a variation of the multithreaded version. It extracts the logic necessary for communicating between threads into a separate module that you can use in your own apps, <a href="threadutil.py"><code>threadutil.py</code></a>. For an even more powerful implementation, see <a href="threadutil_blocking.py"><code>threadutil_blocking.py</code></a>. This is the code which <a href="https://fman.io">fman</a> uses.</li>
+</ul>
+<p>Most of the added complexity of the multithreaded versions comes from having to synchronize the main and background threads. In more detail: The <em>main thread</em> is the thread in which Qt draws pixels on the screen, processes events such as mouse clicks, etc. In the examples here, there is a single background thread which fetches messages from the server. But what should happen when a new message arrives? The background thread can&#39;t just draw the text on the screen, because Qt might just be in the process of drawing itself. The answer is that the background thread must somehow get Qt to draw the text in the main thread. The second and third examples presented here (<a href="02_multithreaded.py"><code>02_multithreaded.py</code></a> and <a href="03_with_threadutil.py"><code>03_with_threadutil.py</code></a>) use different ways of achieving this. In the former, the background thread appends messages to a list, which is then processed in the main thread. The latter uses a custom mechanism that lets the background thread execute arbitrary code in the main thread. In this case, the &quot;arbitrary code&quot; draws the text for the new message on the screen.</p>
+<hr>
+<h1>lesson12</h1>
+<h1>QTreeView example in Python</h1>
+<p>A <em>tree view</em> is what&#39;s classicaly used to display files and folders: A hierarchical structure where items can be expanded. This example application shows how PyQt6&#39;s <a href="https://doc.qt.io/qt-5/qtreeview.html"><code>QTreeView</code></a> can be used to display your local files.</p>
+<p align="center"><img src="../screenshots/qtreeview-example-in-python.png" alt="QTreeView example in Python"></p>
+
+<p>As for the other examples in this repository, the code lies in <a href="main.py"><code>main.py</code></a>. The important steps are:</p>
+<pre><code>model = QDirModel()
+view = QTreeView()
+view.setModel(model)
+view.setRootIndex(model.index(home_directory))
+view.show()
+</code></pre>
+<p>Both <a href="https://doc.qt.io/qt-5/qdirmodel.html"><code>QDirModel</code></a> and <a href="https://doc.qt.io/qt-5/qtreeview.html"><code>QTreeView</code></a> are a part of Qt&#39;s <a href="https://doc.qt.io/qt-5/model-view-programming.html">Model/View framework</a>. The idea is that the model provides data to the view, which then displays it. As you can see above, we first instantiate the model and the view, then connect the two via <code>.setModel(...)</code>. The <code>.setRootIndex(...)</code> call instructs the view to display the files in your home directory.</p>
+<p>The nice thing about the Model/View distinction is that it lets you visualize the same data in different ways. For instance, you could replace the line <code>view = QTreeView()</code> above by the following to display a flat <em>list</em> of your files instead:</p>
+<pre><code>view = QListView()
+</code></pre>
+<p>The next example, <a href="../13%20PyQt6%20QListView">PyQt6 QListview</a>, shows another way of using <code>QListView</code>.</p>
+<p>To run this example yourself, please follow <a href="../../README.md#running-the-examples">the instructions in the README of this repository</a>.</p>
+<hr>
+<h1>lesson13</h1>
+<h1>PyQt6 QListView</h1>
+<p>This example shows how you can use a PyQt6 <a href="https://doc.qt.io/qt-5/qlistview.html"><code>QListView</code></a> to display a list.</p>
+<p align="center"><img src="../screenshots/pyqt5-qlistview.png" alt="PyQt6 QListView"></p>
+
+<p>It simply shows a static list of strings. Technically, the data is managed by Qt&#39;s <a href="https://doc.qt.io/qt-5/qstringlistmodel.html"><code>QStringListModel</code></a>. The important steps of the <a href="main.py">code</a> are:</p>
+<pre><code>model = QStringListModel([&quot;An element&quot;, &quot;Another element&quot;, &quot;Yay! Another one.&quot;])
+view = QListView()
+view.setModel(model)
+view.show()
+</code></pre>
+<p>This is very similar to the <a href="../12%20QTreeView%20example%20in%20Python">previous example</a>, where we displayed a tree view of files. The reason for this similarity is that both examples use Qt&#39;s Model/View framework. As an exercise for yourself, you might want to try using <code>QListView</code> instead of <code>QTreeView</code> in the previous example.</p>
+<p>To run this example, please follow <a href="../../README.md#running-the-examples">the instructions in the README of this repository</a>.</p>
+<hr>
+<p># lesson14</p>
+<h1>QAbstractTableModel example</h1>
+<p>This <a href="https://doc.qt.io/qt-5/qabstracttablemodel.html"><code>QAbstractTableModel</code></a> example shows how you can define a custom Qt <em>model</em> to display tabular data.</p>
+<p align="center"><img src="../screenshots/qabstracttablemodel-example.png" alt="QAbstractTableModel example"></p>
+
+<p>The data is a table of famous scientists. In Python, it can be written as follows:</p>
+<pre><code>headers = [&quot;Scientist name&quot;, &quot;Birthdate&quot;, &quot;Contribution&quot;]
+rows =    [(&quot;Newton&quot;, &quot;1643-01-04&quot;, &quot;Classical mechanics&quot;),
+           (&quot;Einstein&quot;, &quot;1879-03-14&quot;, &quot;Relativity&quot;),
+           (&quot;Darwin&quot;, &quot;1809-02-12&quot;, &quot;Evolution&quot;)]
+</code></pre>
+<p>To make Qt display these data in a table, we need to answer the following questions:</p>
+<ol>
+<li>How many rows are there?</li>
+<li>How many columns?</li>
+<li>What&#39;s the value of each cell?</li>
+<li>What are the (column) headers?</li>
+</ol>
+<p>We do this by subclassing <code>QAbstractTableModel</code>. This lets us answer each of the above questions by implementing a corresponding method:</p>
+<pre><code>class TableModel(QAbstractTableModel):
+    def rowCount(self, parent):
+        # How many rows are there?
+        return len(rows)
+    def columnCount(self, parent):
+        # How many columns?
+        return len(headers)
+    def data(self, index, role):
+        if role != Qt.ItemDataRole.DisplayRole:
+            return QVariant()
+        # What&#39;s the value of the cell at the given index?
+        return rows[index.row()][index.column()]
+    def headerData(self, section, orientation, role):
+        if role != Qt.ItemDataRole.DisplayRole or orientation != Qt.Orientation.Horizontal:
+            return QVariant()
+        # What&#39;s the header for the given column?
+        return headers[section]
+</code></pre>
+<p>Once we have this model, we can instantiate it, connect it to a <code>QTableView</code> and show it in a window:</p>
+<pre><code>model = TableModel()
+view = QTableView()
+view.setModel(model)
+view.show()
+</code></pre>
+<p>The full code is in <a href="main.py"><code>main.py</code></a>. For instructions how to run it, please see <a href="../../README.md#running-the-examples">the instructions in the README of this repository</a>.</p>
+<hr>
+<h1>lesson15</h1>
+<h1>PyQt database example</h1>
+<p>This example shows how you can connect to a database from a PyQt application. </p>
+<p align="center"><img src="../screenshots/pyqt-database-example.png" alt="PyQt database example"></p>
+
+<p>The screenshot shows a table of project data that comes from a SQL database. One of the projects is real ;-) (Though the income is made up.)</p>
+<p>There are many different database systems: MySQL, PostgreSQL, etc. For simplicity, this example uses SQLite because it ships with Python and doesn&#39;t require separate installation.</p>
+<p>The default way of connecting to a database in Python is the <a href="https://www.python.org/dev/peps/pep-0249/">Database API v2.0</a>. You can see an example of its use in <a href="initdb.py"><code>initdb.py</code></a>. Essentially, you use <code>.connect(...)</code> to connect to a database, <code>.cursor()</code> to obtain a cursor for data querying / manipulation, and <code>.commit()</code> to save any changes you made:</p>
+<pre><code>import sqlite3
+connection = sqlite3.connect(&quot;projects.db&quot;)
+cursor = connection.cursor()
+cursor.execute(&quot;CREATE TABLE projects ...&quot;)
+cursor.execute(&quot;INSERT INTO projects ...&quot;)
+connection.commit()
+</code></pre>
+<p>The above code creates the SQLite file <code>projects.db</code> with a copy of the data shown in the screenshot.</p>
+<p>Qt also has its own facilities for connecting to a database. You can see this in <a href="main.py"><code>main.py</code></a>, where we open the <code>projects.db</code> file created above and display its data:</p>
+<pre><code>db = QSqlDatabase.addDatabase(&quot;QSQLITE&quot;)
+db.setDatabaseName(&quot;projects.db&quot;)
+db.open()
+model = QSqlTableModel(None, db)
+model.setTable(&quot;projects&quot;)
+model.select()
+view = QTableView()
+view.setModel(model)
+view.show()
+</code></pre>
+<p>As in <a href="../12%20QTreeView%20example%20in%20Python">previous examples</a>, this uses Qt&#39;s Model/View framework to separate the two concerns of obtaining and displaying the data: We use <code>model</code> to load the database, and <code>view</code> to display it.</p>
+<p>To run this example yourself, first follow <a href="../../README.md#running-the-examples">these instructions</a>. Then invoke <code>python initdb.py</code> to initialize the database. After that, you can execute <code>python main.py</code> to start the sample application.</p>
+<p>While we use SQLite here, you can easily use other database systems as well. For instance, you could use PostgreSQL via the <a href="http://initd.org/psycopg/">psycopg2</a> library.</p>
+<hr>
+<h1><strong>完结</strong></h1>
+<h1>复习回顾</h1>
+<h1>PyQt6学习总结笔记</h1>
+<h2>一、学习收获与核心知识点总结</h2>
+<h3>（一）PyQt6基础入门</h3>
+<ol>
+<li><strong>环境搭建与基本概念</strong><ul>
+<li>安装PyQt6库，确保在开发环境中能够正确引入相关模块。</li>
+<li>理解PyQt6应用程序的基本结构，包括创建<code>QApplication</code>实例作为应用程序的核心，每个应用程序必须且仅有一个<code>QApplication</code>对象，负责管理应用程序的生命周期和资源。</li>
+</ul>
+</li>
+<li><strong>窗口与部件（Widgets）</strong><ul>
+<li>学习使用各种常见的部件，如<code>QLabel</code>（用于显示文本或图像）、<code>QPushButton</code>（按钮）、<code>QComboBox</code>（下拉框）、<code>QCheckBox</code>（复选框）、<code>QRadioButton</code>（单选按钮）、<code>QTableWidget</code>（表格）、<code>QLineEdit</code>（文本输入框）、<code>QSlider</code>（滑块）、<code>QProgressBar</code>（进度条）等。</li>
+<li>掌握部件的创建、属性设置（如文本、大小、样式等）以及在窗口中的布局方式。例如，<code>QWidget</code>是构建用户界面的基础组件，可作为独立窗口或其他部件的容器，通过布局管理器（如<code>QVBoxLayout</code>、<code>QHBoxLayout</code>、<code>QGridLayout</code>）来控制部件的位置和排列，实现灵活的界面布局，使界面在不同窗口大小下保持合适的布局。</li>
+</ul>
+</li>
+</ol>
+<h3>（二）事件处理与信号槽机制</h3>
+<ol>
+<li><strong>信号槽原理</strong><ul>
+<li>信号是对象发出的事件通知，槽是接收到信号后执行的函数。通过将信号与槽函数连接，实现对用户操作（如鼠标点击、键盘输入等）的响应。例如，<code>button.clicked.connect(on_button_clicked)</code>将按钮的点击信号与自定义的<code>on_button_clicked</code>函数连接，当按钮被点击时，自动调用该函数执行相应操作。</li>
+</ul>
+</li>
+<li><strong>常用信号与槽函数示例</strong><ul>
+<li>在按钮点击事件中，定义槽函数弹出消息框（<code>QMessageBox</code>）显示提示信息，如示例中点击按钮后弹出“<code>You clicked the button!</code>”的消息框。</li>
+<li>处理窗口关闭事件（<code>closeEvent</code>），当文本有未保存修改时，弹出对话框询问用户是否保存、丢弃或取消关闭操作，确保用户数据的安全处理。</li>
+</ul>
+</li>
+</ol>
+<h3>（三）图形用户界面设计与布局</h3>
+<ol>
+<li><strong>布局管理器的使用</strong><ul>
+<li><code>QVBoxLayout</code>（垂直布局）、<code>QHBoxLayout</code>（水平布局）和<code>QGridLayout</code>（网格布局）的特点和适用场景。<code>QVBoxLayout</code>将部件垂直排列，<code>QHBoxLayout</code>将部件水平排列，<code>QGridLayout</code>则可以将部件按照网格形式布局，方便实现复杂的界面布局。</li>
+<li>如何通过布局管理器添加部件（<code>addWidget</code>方法）、设置布局参数（如拉伸因子、间距等）来优化界面布局，确保界面的美观性和易用性。</li>
+</ul>
+</li>
+<li><strong>界面风格与主题设置</strong><ul>
+<li>使用<code>QApplication.setStyle</code>方法设置应用程序的样式，如<code>Fusion</code>样式可在不同操作系统上提供一致的外观。</li>
+<li>通过<code>QPalette</code>调色板对象，自定义应用程序的颜色方案，包括窗口背景、文本、按钮等各个部件的颜色，实现个性化的界面风格，如设置深色主题界面，提高用户体验和视觉效果。</li>
+</ul>
+</li>
+</ol>
+<h3>（四）文件操作与应用功能扩展</h3>
+<ol>
+<li><strong>文件操作实现</strong><ul>
+<li>在文本编辑器示例中，学习了文件的打开（<code>QFileDialog.getOpenFileName</code>）、保存（<code>open</code>函数写入文件内容）和另存为（<code>QFileDialog.getSaveFileName</code>后保存）操作，通过菜单和快捷键（<code>QAction</code>与<code>QKeySequence</code>结合）实现便捷的文件操作功能，方便用户处理文本文件。</li>
+<li>处理文件路径的记录和管理，确保文件操作的准确性和连贯性，同时在保存文件后更新文档的修改状态，避免重复提示保存。</li>
+</ul>
+</li>
+<li><strong>应用功能扩展思路</strong><ul>
+<li>基于文本编辑器示例，了解到可以进一步添加功能，如新建文件、文本格式设置（字体、字号、颜色等）、优化界面布局（添加工具栏）等，以提升应用程序的实用性和功能性。</li>
+</ul>
+</li>
+</ol>
+<h3>（五）高级特性与拓展功能</h3>
+<ol>
+<li><strong>Qt Designer的使用</strong><ul>
+<li>Qt Designer是用于构建Qt图形用户界面的图形化工具，可直观地设计对话框等界面元素，生成<code>.ui</code>文件。通过<code>uic.loadUiType</code>方法在Python中加载<code>.ui</code>文件，实现界面与代码的分离，提高开发效率，方便设计师和开发者协作。</li>
+</ul>
+</li>
+<li><strong>QML与Python的结合</strong><ul>
+<li>Qt Quick技术使用QML标记语言，适合移动和触摸屏设备的高度定制图形和流畅动画效果。在示例中，通过<code>import</code>语句引入必要模块，在<code>Window</code>元素内定义<code>Image</code>（显示图片）、<code>MouseArea</code>（处理鼠标事件）等子元素，实现界面的构建和交互逻辑（如点击鼠标使风车旋转）。在Python中使用<code>QQmlApplicationEngine</code>加载和运行QML文件，实现了Python与QML的结合，为开发跨平台应用提供了更多选择。</li>
+</ul>
+</li>
+<li><strong>多线程应用</strong><ul>
+<li>在聊天客户端示例中，了解到多线程的应用场景，如通过多线程（<code>02_multithreaded.py</code>）在后台获取新消息，提高应用程序的响应性能，避免单线程在获取消息时无法处理用户输入导致的卡顿现象。学习了多线程编程中的线程同步问题，以及不同的线程通信和协作方式，如背景线程与主线程之间的数据传递和交互，使应用程序能够更高效地处理并发任务。</li>
+</ul>
+</li>
+<li><strong>数据库连接与操作</strong><ul>
+<li>以SQLite数据库为例，学习了在PyQt应用程序中连接数据库的方法。使用Python的标准数据库API（如<code>sqlite3</code>）进行数据库的创建（<code>connect</code>、<code>cursor</code>、<code>execute</code>和<code>commit</code>操作），以及使用Qt的<code>QSqlDatabase</code>和<code>QSqlTableModel</code>类连接和操作数据库，通过<code>Model/View</code>框架将数据获取和显示分离，实现了在应用程序中展示数据库表数据的功能，同时了解到可以扩展到其他数据库系统（如MySQL、PostgreSQL等）的连接和使用。</li>
+</ul>
+</li>
+</ol>
+<h3>（六）模型 - 视图框架（Model/View Framework）</h3>
+<ol>
+<li><strong>框架原理与作用</strong><ul>
+<li>模型 - 视图框架用于分离数据管理和数据显示，使得数据可以以不同的方式展示。模型负责提供数据，视图负责显示数据，两者通过特定的接口进行交互，提高了代码的可维护性和扩展性，方便对数据和界面进行独立的修改和优化。</li>
+</ul>
+</li>
+<li><strong>不同视图类型的应用示例</strong><ul>
+<li>在文件管理器示例中，使用<code>QDirModel</code>作为模型，<code>QTreeView</code>作为视图，展示了本地文件的层次结构，用户可以通过展开和折叠节点查看文件和文件夹。通过<code>setModel</code>和<code>setRootIndex</code>方法将模型和视图关联，并指定显示的根目录（如用户主目录）。</li>
+<li>在列表显示示例中，使用<code>QStringListModel</code>作为模型，<code>QListView</code>作为视图，展示了简单的字符串列表。通过设置模型的数据（<code>[&quot;An element&quot;, &quot;Another element&quot;, &quot;Yay! Another one.&quot;]</code>），并将模型与视图连接，实现了静态列表的显示，同时了解到可以通过替换视图类型（如将<code>QTreeView</code>替换为<code>QListView</code>）来改变数据的展示方式。</li>
+<li>在表格数据显示示例中，通过自定义<code>QAbstractTableModel</code>的子类<code>TableModel</code>，实现了对表格数据（如著名科学家信息）的管理，包括定义行数（<code>rowCount</code>方法）、列数（<code>columnCount</code>方法）、单元格数据（<code>data</code>方法）和列标题（<code>headerData</code>方法），然后将模型与<code>QTableView</code>连接，展示了自定义表格数据的过程，体现了模型 - 视图框架在处理复杂数据结构展示时的灵活性和强大功能。</li>
+</ul>
+</li>
+</ol>
+<h2>二、代码示例与实践应用</h2>
+<h3>（一）创建简单的Hello World应用</h3>
+<pre><code class="language-python">from PyQt6.QtWidgets import *
+
+app = QApplication([])
+label = QLabel(&#39;Hello World!&#39;)
+label.show()
+app.exec()
+</code></pre>
+<p>此代码创建了一个简单的窗口，包含一个显示“Hello World!”的标签，展示了PyQt6应用程序的基本结构，包括创建<code>QApplication</code>实例和显示一个部件。</p>
+<h3>（二）构建具有多种部件的界面</h3>
+<pre><code class="language-python">from PyQt6.QtCore import QDateTime, Qt, QTimer
+from PyQt6.QtWidgets import (QApplication, QCheckBox, QComboBox, QDateTimeEdit,
+                             QDial, QDialog, QGridLayout, QGroupBox, QHBoxLayout, QLabel, QLineEdit,
+                             QProgressBar, QPushButton, QRadioButton, QScrollBar, QSizePolicy,
+                             QSlider, QSpinBox, QStyleFactory, QTableWidget, QTabWidget, QTextEdit,
+                             QVBoxLayout, QWidget)
+
+class WidgetGallery(QDialog):
+    def __init__(self, parent=None):
+        super(WidgetGallery, self).__init__(parent)
+        self.originalPalette = QApplication.palette()
+        styleComboBox = QComboBox()
+        styleComboBox.addItems(QStyleFactory.keys())
+        styleLabel = QLabel(&quot;&amp;Style:&quot;)
+        styleLabel.setBuddy(styleComboBox)
+        self.useStylePaletteCheckBox = QCheckBox(&quot;&amp;Use style&#39;s standard palette&quot;)
+        self.useStylePaletteCheckBox.setChecked(True)
+        disableWidgetsCheckBox = QCheckBox(&quot;&amp;Disable widgets&quot;)
+        self.createTopLeftGroupBox()
+        self.createTopRightGroupBox()
+        self.createBottomLeftTabWidget()
+        self.createBottomRightGroupBox()
+        self.createProgressBar()
+        styleComboBox.textActivated.connect(self.changeStyle)
+        self.useStylePaletteCheckBox.toggled.connect(self.changePalette)
+        disableWidgetsCheckBox.toggled.connect(self.topLeftGroupBox.setDisabled)
+        disableWidgetsCheckBox.toggled.connect(self.topRightGroupBox.setDisabled)
+        disableWidgetsCheckBox.toggled.connect(self.bottomLeftTabWidget.setDisabled)
+        disableWidgetsCheckBox.toggled.connect(self.bottomRightGroupBox.setDisabled)
+        topLayout = QHBoxLayout()
+        topLayout.addWidget(styleLabel)
+        topLayout.addWidget(styleComboBox)
+        topLayout.addStretch(1)
+        topLayout.addWidget(self.useStylePaletteCheckBox)
+        topLayout.addWidget(disableWidgetsCheckBox)
+        mainLayout = QGridLayout()
+        mainLayout.addLayout(topLayout, 0, 0, 1, 2)
+        mainLayout.addWidget(self.topLeftGroupBox, 1, 0)
+        mainLayout.addWidget(self.topRightGroupBox, 1, 1)
+        mainLayout.addWidget(self.bottomLeftTabWidget, 2, 0)
+        mainLayout.addWidget(self.bottomRightGroupBox, 2, 1)
+        mainLayout.addWidget(self.progressBar, 3, 0, 1, 2)
+        mainLayout.setRowStretch(1, 1)
+        mainLayout.setRowStretch(2, 1)
+        mainLayout.setColumnStretch(0, 1)
+        mainLayout.setColumnStretch(1, 1)
+        self.setLayout(mainLayout)
+        self.setWindowTitle(&quot;Styles&quot;)
+        self.changeStyle(&#39;Windows&#39;)
+
+    def changeStyle(self, styleName):
+        QApplication.setStyle(QStyleFactory.create(styleName))
+        self.changePalette()
+
+    def changePalette(self):
+        if (self.useStylePaletteCheckBox.isChecked()):
+            QApplication.setPalette(QApplication.style().standardPalette())
+        else:
+            QApplication.setPalette(self.originalPalette)
+
+    def advanceProgressBar(self):
+        curVal = self.progressBar.value()
+        maxVal = self.progressBar.maximum()
+        self.progressBar.setValue(curVal + (maxVal - curVal) // 100)
+
+    def createTopLeftGroupBox(self):
+        self.topLeftGroupBox = QGroupBox(&quot;Group 1&quot;)
+        radioButton1 = QRadioButton(&quot;Radio button 1&quot;)
+        radioButton2 = QRadioButton(&quot;Radio button 2&quot;)
+        radioButton3 = QRadioButton(&quot;Radio button 3&quot;)
+        radioButton1.setChecked(True)
+        checkBox = QCheckBox(&quot;Tri - state check box&quot;)
+        checkBox.setTristate(True)
+        checkBox.setCheckState(Qt.CheckState.PartiallyChecked)
+        layout = QVBoxLayout()
+        layout.addWidget(radioButton1)
+        layout.addWidget(radioButton2)
+        layout.addWidget(radioButton3)
+        layout.addWidget(checkBox)
+        layout.addStretch(1)
+        self.topLeftGroupBox.setLayout(layout)
+
+    def createTopRightGroupBox(self):
+        self.topRightGroupBox = QGroupBox(&quot;Group 2&quot;)
+        defaultPushButton = QPushButton(&quot;Default Push Button&quot;)
+        defaultPushButton.setDefault(True)
+        togglePushButton = QPushButton(&quot;Toggle Push Button&quot;)
+        togglePushButton.setCheckable(True)
+        togglePushButton.setChecked(True)
+        flatPushButton = QPushButton(&quot;Flat Push Button&quot;)
+        flatPushButton.setFlat(True)
+        layout = QVBoxLayout()
+        layout.addWidget(defaultPushButton)
+        layout.addWidget(togglePushButton)
+        layout.addWidget(flatPushButton)
+        layout.addStretch(1)
+        self.topRightGroupBox.setLayout(layout)
+
+    def createBottomLeftTabWidget(self):
+        self.bottomLeftTabWidget = QTabWidget()
+        self.bottomLeftTabWidget.setSizePolicy(QSizePolicy.Policy.Preferred,
+                                               QSizePolicy.Policy.Ignored)
+        tab1 = QWidget()
+        tableWidget = QTableWidget(10, 10)
+        tab1hbox = QHBoxLayout()
+        tab1hbox.setContentsMargins(5, 5, 5, 5)
+        tab1hbox.addWidget(tableWidget)
+        tab1.setLayout(tab1hbox)
+        tab2 = QWidget()
+        textEdit = QTextEdit()
+        textEdit.setPlainText(&quot;Twinkle, twinkle, little star,\n&quot;
+                              &quot;How I wonder what you are.\n&quot;
+                              &quot;Up above the world so high,\n&quot;
+                              &quot;Like a diamond in the sky.\n&quot;
+                              &quot;Twinkle, twinkle, little star,\n&quot;
+                              &quot;How I wonder what you are!\n&quot;)
+        tab2hbox = QHBoxLayout()
+        tab2hbox.setContentsMargins(5, 5, 5, 5)
+        tab2hbox.addWidget(textEdit)
+        tab2.setLayout(tab2hbox)
+        self.bottomLeftTabWidget.addTab(tab1, &quot;&amp;Table&quot;)
+        self.bottomLeftTabWidget.addTab(tab2, &quot;Text &amp;Edit&quot;)
+
+    def createBottomRightGroupBox(self):
+        self.bottomRightGroupBox = QGroupBox(&quot;Group 3&quot;)
+        self.bottomRightGroupBox.setCheckable(True)
+        self.bottomRightGroupBox.setChecked(True)
+        lineEdit = QLineEdit(&#39;s3cRe7&#39;)
+        lineEdit.setEchoMode(QLineEdit.EchoMode.Password)
+        spinBox = QSpinBox(self.bottomRightGroupBox)
+        spinBox.setValue(50)
+        dateTimeEdit = QDateTimeEdit(self.bottomRightGroupBox)
+        dateTimeEdit.setDateTime(QDateTime.currentDateTime())
+        slider = QSlider(Qt.Orientation.Horizontal, self.bottomRightGroupBox)
+        slider.setValue(40)
+        scrollBar = QScrollBar(Qt.Orientation.Horizontal, self.bottomRightGroupBox)
+        scrollBar.setValue(60)
+        dial = QDial(self.bottomRightGroupBox)
+        dial.setValue(30)
+        dial.setNotchesVisible(True)
+        layout = QGridLayout()
+        layout.addWidget(lineEdit, 0, 0, 1, 2)
+        layout.addWidget(spinBox, 1, 0, 1, 2)
+        layout.addWidget(dateTimeEdit, 2, 0, 1, 2)
+        layout.addWidget(slider, 3, 0)
+        layout.addWidget(scrollBar, 4, 0)
+        layout.addWidget(dial, 3, 1, 2, 1)
+        layout.setRowStretch(5, 1)
+        self.bottomRightGroupBox.setLayout(layout)
+
+    def createProgressBar(self):
+        self.progressBar = QProgressBar()
+        self.progressBar.setRange(0, 10000)
+        self.progressBar.setValue(0)
+        timer = QTimer(self)
+        timer.timeout.connect(self.advanceProgressBar)
+        timer.start(1000)
+
+if __name__ == &#39;__main__&#39;:
+    import sys
+    app = QApplication(sys.argv)
+    gallery = WidgetGallery()
+    gallery.show()
+    sys.exit(app.exec())
+</code></pre>
+<p>该代码创建了一个包含多种部件的对话框，展示了不同类型的部件（如按钮、复选框、单选按钮、表格、文本编辑框等）以及布局管理器（<code>QHBoxLayout</code>、<code>QVBoxLayout</code>、<code>QGridLayout</code>）的使用，同时实现了样式切换和调色板功能，通过信号槽机制连接部件的信号与相应的槽函数，实现了交互功能（如进度条的自动更新）。</p>
+<h3>（三）实现文件操作的文本编辑器</h3>
+<pre><code class="language-python">from PyQt6.QtWidgets import *
+from PyQt6.QtGui import QKeySequence, QAction
+
+class MainWindow(QMainWindow):
+    def closeEvent(self, e):
+        if not text.document().isModified():
+            return
+        answer = QMessageBox.question(
+            window, None,
+            &quot;You have unsaved changes. Save before closing?&quot;,
+            QMessageBox.Save | QMessageBox.Discard | QMessageBox.Cancel
+        )
+        if answer &amp; QMessageBox.Save:
+            save()
+        elif answer &amp; QMessageBox.Cancel:
+            e.ignore()
+
+app = QApplication([])
+app.setApplicationName(&quot;Text Editor&quot;)
+text = QPlainTextEdit()
+window = MainWindow()
+window.setCentralWidget(text)
+file_path = None
+
+menu = window.menuBar().addMenu(&quot;&amp;File&quot;)
+open_action = QAction(&quot;&amp;Open&quot;)
+
+def open_file():
+    global file_path
+    path = QFileDialog.getOpenFileName(window, &quot;Open&quot;)[0]
+    if path:
+        text.setPlainText(open(path).read())
+        file_path = path
+
+open_action.triggered.connect(open_file)
+open_action.setShortcut(QKeySequence.Open)
+menu.addAction(open_action)
+
+save_action = QAction(&quot;&amp;Save&quot;)
+
+def save():
+    if file_path is None:
+        save_as()
+    else:
+        with open(file_path, &quot;w&quot;) as f:
+            f.write(text.toPlainText())
+        text.document().setModified(False)
+
+save_action.triggered.connect(save)
+save_action.setShortcut(QKeySequence.Save)
+menu.addAction(save_action)
+
+save_as_action = QAction(&quot;Save &amp;As...&quot;)
+
+def save_as():
+    global file_path
+    path = QFileDialog.getSaveFileName(window, &quot;Save As&quot;)[0]
+    if path:
+        file_path = path
+        save()
+
+save_as_action.triggered.connect(save_as)
+menu.addAction(save_as_action)
+
+close = QAction(&quot;&amp;Close&quot;)
+close.triggered.connect(window.close)
+menu.addAction(close)
+
+help_menu = window.menuBar().addMenu(&quot;&amp;Help&quot;)
+about_action = QAction(&quot;&amp;About&quot;)
+help_menu.addAction(about_action)
+
+def show_about_dialog():
+    text = &quot;&lt;center&gt;&quot; \
+           &quot;&lt;h1&gt;Text Editor&lt;/h1&gt;&quot; \
+           &quot;&amp;#8291;&quot; \
+           &quot;&lt;img src=icon.svg&gt;&quot; \
+           &quot;&lt;/center&gt;&quot; \
+           &quot;&lt;p&gt;Version 31.4.159.265358&lt;br/&gt;&quot; \
+           &quot;Copyright &amp;copy; Company Inc.&lt;/p&gt;&quot;
+    QMessageBox.about(window, &quot;About Text Editor&quot;, text)
+
+about_action.triggered.connect(show_about_dialog)
+
+window.show()
+app.exec()
+</code></pre>
+<p>此文本编辑器代码实现了文件的打开、保存、另存为和关闭功能，通过<code>QFileDialog</code>获取文件路径，使用<code>QAction</code>和<code>QKeySequence</code>实现菜单操作和快捷键功能，在窗口关闭事件中处理未保存修改的情况，同时包含帮助菜单中的关于对话框，展示了一个较为完整的文本编辑器应用程序的基本框架和功能实现。</p>
+<h3>（四）结合Qt Designer设计界面</h3>
+<ol>
+<li><strong>创建<code>.ui</code>文件（使用Qt Designer）</strong><ul>
+<li>通过Qt Designer图形化工具设计界面，生成<code>.ui</code>文件（如<code>dialog.ui</code>），包含了界面的布局和组件信息，如对话框的大小、标题，以及包含的按钮等组件的属性和布局设置。</li>
+</ul>
+</li>
+<li><strong>在Python中加载<code>.ui</code>文件</strong></li>
+</ol>
+<pre><code class="language-python">from PyQt6 import uic
+from PyQt6.QtWidgets import QApplication
+
+Form, Window = uic.loadUiType(&quot;dialog.ui&quot;)
+
+app = QApplication([])
+window = Window()
+form = Form()
+form.setupUi(window)
+window.show()
+app.exec()
+</code></pre>
+<p>这段代码展示了如何在Python中加载由Qt Designer生成的<code>.ui</code>文件，通过<code>uic.loadUiType</code>方法获取两个类（<code>Form</code>和<code>Window</code>），然后实例化并设置界面，实现了界面设计与代码逻辑的分离，提高了开发效率和界面设计的灵活性。</p>
+<h3>（五）QML与Python结合的应用</h3>
+<ol>
+<li><strong>QML界面设计（<code>main.qml</code>）</strong></li>
+</ol>
+<pre><code class="language-qml">import QtQuick 2.2
+import QtQuick.Window 2.2
+
+Window {
+    Image {
+        id: background
+        source: &quot;background.png&quot;
+    }
+    Image {
+        id: wheel
+        anchors.centerIn: parent
+        source: &quot;pinwheel.png&quot;
+        Behavior on rotation {
+            NumberAnimation {
+                duration: 250
+            }
+        }
+    }
+    MouseArea {
+        anchors.fill: parent
+        onPressed: {
+            wheel.rotation += 90
+        }
+    }
+    visible: true
+    width: background.width
+    height: background.height
+}
+</code></pre>
+<p>在QML文件中，定义了一个窗口（<code>Window</code>），包含背景图片（<code>background.png</code>）和可旋转的风车图片（<code>pinwheel.png</code>），通过<code>Behavior on rotation</code>为风车的旋转添加动画效果，使用<code>MouseArea</code>处理鼠标点击事件，使风车在点击时旋转，展示了QML构建界面和实现交互的简洁语法。
+2. <strong>Python加载QML文件（<code>main.py</code>）</strong></p>
+<pre><code class="language-python">from PyQt6.QtQml import QQmlApplicationEngine
+from PyQt6.QtWidgets import QApplication
+
+app = QApplication([])
+engine = QQmlApplicationEngine()
+engine.load(&quot;main.qml&quot;)
+app.exec()
+</code></pre>
+<p>在Python代码中，创建<code>QApplication</code>实例后，使用<code>QQmlApplicationEngine</code>加载<code>main.qml</code>文件，启动应用程序的事件循环，实现了Python与QML的结合，展示了如何将QML构建的界面集成到Python应用程序中，发挥Qt Quick技术在移动和触摸屏设备应用开发中的优势。</p>
+<h3>（六）多线程应用示例（聊天客户端）</h3>
+<ol>
+<li><strong>单线程版本（<code>01_single_threaded.py</code>）</strong><ul>
+<li>该版本不使用线程，在主线程中每秒从服务器获取最新消息，由于在获取消息时无法处理用户按键输入，导致输入时可能出现卡顿现象，体现了单线程在处理耗时任务时对应用程序响应性能的影响。</li>
+</ul>
+</li>
+<li><strong>多线程版本（<code>02_multithreaded.py</code>）</strong><ul>
+<li>使用线程在后台获取新消息，通过合理的线程同步机制（如线程间的数据共享和协作方式），使应用程序在获取消息的同时能够及时响应用户输入，提高了应用程序的响应性能，展示了多线程在改善应用程序并发处理能力方面的作用。</li>
+</ul>
+</li>
+<li><strong>优化的多线程版本（<code>03_with_threadutil.py</code>）</strong><ul>
+<li>此版本提取了线程间通信的逻辑到单独的模块（<code>threadutil.py</code>），提供了更方便的线程间交互方式，如让背景线程能够在主线程中执行特定代码（如绘制新消息文本），进一步优化了多线程应用的结构和性能，为开发复杂的多线程应用提供了更好的实践参考。</li>
+</ul>
+</li>
+</ol>
+<h3>（七）模型 - 视图框架应用示例</h3>
+<ol>
+<li><strong>文件管理器（<code>QTreeView</code>示例）</strong></li>
+</ol>
+<pre><code class="language-python">import sys
+from PyQt6.QtWidgets import QApplication, QDirModel, QTreeView
+from PyQt6.QtCore import QDir
+
+if __name__ == &#39;__main__&#39;:
+    app = QApplication(sys.argv)
+    model = QDirModel()
+    view = QTreeView()
+    view.setModel(model)
+    view.setRootIndex(model.index(QDir.homePath()))
+    view.show()
+    sys.exit(app.exec())
+</code></pre>
+<p>在文件管理器示例中，使用<code>QDirModel</code>作为数据模型，<code>QTreeView</code>作为视图，通过<code>setModel</code>和<code>setRootIndex</code>方法将模型与视图关联，并设置显示的根目录为用户主目录（<code>QDir.homePath()</code>），展示了如何使用<code>QTreeView</code>以树状结构展示本地文件系统，体现了模型 - 视图框架在文件管理类应用中的应用方式。
+2. <strong>列表显示（<code>QListView</code>示例）</strong></p>
+<pre><code class="language-python">from PyQt6.QtWidgets import QApplication, QListView, QStringListModel
+
+app = QApplication([])
+model = QStringListModel([&quot;An element&quot;, &quot;Another element&quot;, &quot;Yay! Another one.&quot;])
+view = QListView()
+view.setModel(model)
+view.show()
+app.exec()
+</code></pre>
+<p>该示例使用<code>QStringListModel</code>作为模型，<code>QListView</code>作为视图，展示了简单的字符串列表，通过设置模型的数据并将模型与视图连接，实现了静态列表的显示，同时也体现了模型 - 视图框架在简单列表数据展示方面的便利性和灵活性。
+3. <strong>表格数据显示（<code>QAbstractTableModel</code>示例）</strong></p>
+<pre><code class="language-python">from PyQt6.QtCore import Qt
+from PyQt6.QtWidgets import QApplication, QTableView
+from PyQt6.QtCore import QAbstractTableModel
+
+headers = [&quot;Scientist name&quot;, &quot;Birthdate&quot;, &quot;Contribution&quot;]
+rows =    [(&quot;Newton&quot;, &quot;1643-01-04&quot;, &quot;Classical mechanics&quot;),
+           (&quot;Einstein&quot;, &quot;1879-03-14&quot;, &quot;Relativity&quot;),
+           (&quot;Darwin&quot;, &quot;1809-02-12&quot;, &quot;Evolution&quot;)]
+
+class TableModel(QAbstractTableModel):
+    def rowCount(self, parent):
+        return len(rows)
+
+    def columnCount(self, parent):
+        return len(headers)
+
+    def data(self, index, role):
+        if role!= Qt.ItemDataRole.DisplayRole:
+            return None
+        return rows[index.row()][index.column()]
+
+    def headerData(self, section, orientation, role):
+        if role!= Qt.ItemDataRole.DisplayRole or orientation!= Qt.Orientation.Horizontal:
+            return None
+        return headers[section]
+
+app = QApplication([])
+model = TableModel()
+view = QTableView()
+view.setModel(model)
+view.show()
+app.exec()
+</code></pre>
+<p>在表格数据显示示例中，通过自定义<code>QAbstractTableModel</code>的子类<code>TableModel</code>，实现了对表格数据（著名科学家信息）的管理，包括定义行数、列数、单元格数据和列标题，然后将模型与<code>QTableView</code>连接，展示了如何使用模型 - 视图框架展示自定义的表格数据，体现了该框架在处理复杂表格数据结构时的强大功能和高度灵活性，开发者可以根据具体需求定制数据模型以适应不同的数据展示需求。</p>
+<h2>三、学习过程中的难点与解决方法</h2>
+<h3>（一）信号槽机制的理解与应用</h3>
+<ol>
+<li><strong>难点</strong><ul>
+<li>理解信号和槽的概念以及它们之间的连接方式，尤其是在复杂的应用场景中，如何确定合适的信号和对应的槽函数，以及如何确保信号与槽函数之间的参数传递和功能逻辑正确。</li>
+<li>对于一些特殊的信号（如<code>QAbstractButton</code>的<code>clicked</code>信号、<code>QWidget</code>的<code>closeEvent</code>信号等），需要深入了解其触发时机和传递的参数含义，以便正确处理相关事件。</li>
+</ul>
+</li>
+<li><strong>解决方法</strong><ul>
+<li>通过阅读官方文档和示例代码，仔细研究信号和槽的定义、使用方法以及相关的参数说明，加深对其原理的理解。</li>
+<li>多进行实践练习，从简单的按钮点击事件处理开始，逐步扩展到处理更复杂的事件（如窗口关闭、鼠标移动等），通过实际操作来掌握信号槽机制在不同场景下的应用。</li>
+</ul>
+</li>
+</ol>
+<h3>（二）布局管理器的使用与界面适配</h3>
+<ol>
+<li><strong>难点</strong><ul>
+<li>掌握不同布局管理器（<code>QVBoxLayout</code>、<code>QHBoxLayout</code>、<code>QGridLayout</code>等）的特点和适用场景，以及如何灵活组合使用它们来实现复杂的界面布局，确保部件在不同窗口大小下的显示效果合理。</li>
+<li>处理布局中的部件间距、对齐方式以及拉伸因子等参数，以达到理想的界面美观度和可用性，需要花费时间去调整和优化这些参数。</li>
+</ul>
+</li>
+<li><strong>解决方法</strong><ul>
+<li>参考官方文档中的布局管理器示例，学习如何根据界面需求选择合适的布局管理器，并分析其布局参数的设置方法。</li>
+<li>在实践中不断尝试不同的布局组合和参数设置，观察界面的变化效果，通过反复调试来找到最适合的布局方案，同时可以借鉴其他优秀的PyQt应用程序的界面布局设计思路。</li>
+</ul>
+</li>
+</ol>
+<h3>（三）多线程编程中的同步与协作</h3>
+<ol>
+<li><strong>难点</strong><ul>
+<li>理解多线程编程中的线程同步问题，如资源竞争、死锁等情况的发生原因，以及如何使用合适的同步机制（如互斥锁、信号量等）来避免这些问题，确保多线程程序的正确性和稳定性。</li>
+<li>在多线程应用中，实现主线程和后台线程之间的有效通信和协作，如线程间的数据共享和传递，以及如何让后台线程在合适的时机通知主线程进行界面更新等操作，需要协调好不同线程的执行流程和交互逻辑。</li>
+</ul>
+</li>
+<li><strong>解决方法</strong><ul>
+<li>学习多线程编程的基本理论知识，了解线程同步机制的原理和使用方法，通过阅读相关书籍和文章来深入理解多线程编程中的各种概念和问题。</li>
+<li>仔细研究多线程示例代码（如聊天客户端的多线程版本），分析其中线程同步和通信的实现方式，借鉴其代码结构和思路，在自己的实践中逐步应用和优化多线程编程技巧，同时可以使用调试工具来跟踪线程的执行过程，帮助发现和解决问题。</li>
+</ul>
+</li>
+</ol>
+<h3>（四）模型 - 视图框架的深入理解与应用</h3>
+<ol>
+<li><strong>难点</strong><ul>
+<li>理解模型 - 视图框架的设计理念和数据传递机制，尤其是在自定义模型（如<code>QAbstractTableModel</code>的子类）时，需要准确实现相关的抽象方法（如<code>rowCount</code>、<code>columnCount</code>、<code>data</code>、<code>headerData</code>等）来正确提供数据给视图，这需要对数据结构和框架原理有深入的理解。</li>
+<li>如何根据不同的数据展示需求选择合适的模型和视图类型，并进行正确的连接和配置，以实现高效的数据展示和交互功能，需要对各种模型和视图的特点和用法有清晰的认识。</li>
+</ul>
+</li>
+<li><strong>解决方法</strong><ul>
+<li>深入研究官方文档中关于模型 - 视图框架的详细介绍，包括各种模型和视图类的继承关系、功能特点以及使用示例，理解其背后的设计思想和数据流动方式。</li>
+<li>从简单的示例入手，逐步尝试使用不同的模型和视图进行数据展示，在实践中不断积累经验，深入理解如何根据数据特点定制模型和选择合适的视图，同时可以参考开源项目中模型 - 视图框架的应用案例，学习其优秀的设计模式和实践经验。</li>
+</ul>
+</li>
+</ol>
+<h2>四、未来学习方向与展望</h2>
+<h3>（一）深入学习Qt的高级特性</h3>
+<ol>
+<li><strong>进一步探索Qt的图形效果与动画</strong><ul>
+<li>学习使用Qt的图形效果类（如<code>QGraphicsEffect</code>及其子类）来实现更丰富的界面视觉效果，如阴影、模糊、发光等效果，提升应用程序的美观度和用户体验。</li>
+<li>深入研究Qt的动画框架（如<code>QPropertyAnimation</code>、<code>QSequentialAnimationGroup</code>等），实现更复杂的动画效果，如部件的移动、缩放、旋转动画，以及多个动画的组合和顺序控制，为应用程序添加生动的交互元素，尤其适用于游戏开发、多媒体应用等领域。</li>
+</ul>
+</li>
+<li><strong>学习Qt的网络编程</strong><ul>
+<li>掌握Qt的网络模块（如<code>QtNetwork</code>），包括使用<code>QTcpSocket</code>和<code>QTcpServer</code>进行TCP网络编程，实现客户端 - 服务器通信，如开发网络聊天应用、文件传输程序等。</li>
+<li>了解<code>QUdpSocket</code>用于UDP网络编程，适用于实时性要求较高但对数据可靠性要求相对较低的场景，如实时音视频传输、多人在线游戏中的位置同步等，拓宽应用程序的功能范围，实现网络交互功能。</li>
+</ul>
+</li>
+</ol>
+<h3>（二）优化应用程序性能与用户体验</h3>
+<ol>
+<li><strong>性能优化技巧</strong><ul>
+<li>学习如何优化PyQt应用程序的性能，如减少不必要的重绘操作、合理管理内存资源（避免内存泄漏）、优化算法和数据结构以提高处理效率等，确保应用程序在运行时的流畅性和响应速度，尤其是在处理大量数据或复杂界面时。</li>
+<li>研究如何使用缓存机制来提高数据访问速度，例如缓存图片资源、网络请求结果等，减少重复计算和数据加载，提升应用程序的整体性能表现。</li>
+</ul>
+</li>
+<li><strong>用户体验设计原则与实践</strong><ul>
+<li>深入学习用户体验设计（UX）原则，包括界面的简洁性、易用性、一致性等方面，从用户的角度出发设计界面和交互流程，使应用程序更易于理解和操作，提高用户满意度。</li>
+<li>进行用户测试和反馈收集，根据用户的实际使用情况和反馈意见不断改进应用程序的设计和功能，以满足用户的需求和期望，打造具有竞争力的应用程序。</li>
+</ul>
+</li>
+</ol>
+<h3>（三）跨平台开发与应用部署</h3>
+<ol>
+<li><strong>跨平台兼容性测试与优化</strong><ul>
+<li>在不同操作系统（如Windows、Linux、macOS）上进行全面的应用程序测试，确保应用程序在各种平台上的功能正常、界面显示正确，处理好不同操作系统之间的差异（如界面风格、系统API等），提高应用程序的跨平台兼容性。</li>
+<li>针对不同平台的特点进行性能优化和功能适配，例如在移动设备上优化触摸交互体验、在桌面平台上利用系统特定的功能和接口，充分发挥各个平台的优势，为用户提供一致且优质的体验。</li>
+</ul>
+</li>
+<li><strong>应用程序打包与分发</strong><ul>
+<li>深入学习使用<code>fbs</code>等构建系统或其他打包工具（如<code>PyInstaller</code>、<code>cx_Freeze</code>等）将PyQt应用程序打包成</li>
+</ul>
+</li>
+</ol>
+
+<p>......</p>
+<p>......</p>
+<p>......</p>
+<hr>
+<h1>敬请期待更多优质内容,请收藏本网站 <a href="index.html">lrx.xzin.top</a></h1>
+<footer style="font-size: 10px;">
+    <p>© 2025 RONGX</p>
+    <p>制作不易,请多多支持</p>
+</footer>
